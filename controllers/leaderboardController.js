@@ -109,19 +109,27 @@ exports.getUserStats = async (req, res) => {
         const countResult = await db.query('SELECT COUNT(*) as total FROM users');
         const totalManagers = parseInt(countResult.rows[0].total) || 0;
 
-        // 3️⃣ ПАРСИНГ ДАНИХ - Формуємо результат
+        // 3️⃣ SQL ЗАПИТ - Розраховуємо рейтинг користувача
+        const rankResult = await db.query(
+            `SELECT COUNT(*) as rank FROM users 
+             WHERE totalpoints > $1 OR (totalpoints = $1 AND id < $2)`,
+            [user.totalpoints, user.id]
+        );
+        const userRank = parseInt(rankResult.rows[0].rank) + 1;
+
+        // 4️⃣ ПАРСИНГ ДАНИХ - Формуємо результат
         const stats = {
             id: user.id,
             name: user.fullname,
             email: user.email,
             points: parseInt(user.totalpoints) || 0,
-            rank: 0,
+            rank: userRank,
             totalManagers: totalManagers
         };
 
-        console.log('✅ Статистика парсена успішно');
+        console.log(`✅ Статистика парсена успішно. Рейтинг: ${userRank}/${totalManagers}`);
 
-        // 4️⃣ HTTP ВІДПОВІДЬ
+        // 5️⃣ HTTP ВІДПОВІДЬ
         res.status(200).json({
             message: 'Статистика користувача отримана',
             stats: stats

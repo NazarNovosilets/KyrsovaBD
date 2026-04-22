@@ -29,7 +29,7 @@ function Dashboard() {
     navigate('/login');
   };
 
-   useEffect(() => {
+    useEffect(() => {
      const fetchLeaderboard = async () => {
        try {
          setLoading(true);
@@ -41,71 +41,63 @@ function Dashboard() {
 
          console.log(`👤 userId знайдено: ${userId}`);
 
-         // 📡 Завантажуємо лідерборд з API
-         const response = await fetch('/api/auth/leaderboard');
-
-         if (!response.ok) {
-           throw new Error(`HTTP ${response.status}: Помилка при завантаженні лідерборду`);
+         if (!userId) {
+           throw new Error('userId не знайдено у localStorage');
          }
 
-         const data = await response.json();
-         console.log('✅ Дані лідерборду отримані:', data);
+         // 📡 Завантажуємо дані поточного користувача
+         const statsResponse = await fetch(`/api/auth/stats/${userId}`);
 
-         setLeaderboard(data.leaderboard || []);
+         if (!statsResponse.ok) {
+           throw new Error(`HTTP ${statsResponse.status}: Помилка при завантаженні статистики`);
+         }
 
-         // Встановлюємо базову статистику
-         if (data.leaderboard && data.leaderboard.length > 0) {
-           const currentUser = data.leaderboard[0];
+         const statsData = await statsResponse.json();
+         console.log('✅ Статистика користувача отримана:', statsData);
+
+         // 📡 Завантажуємо лідерборд з API
+         const leaderboardResponse = await fetch('/api/auth/leaderboard');
+
+         if (!leaderboardResponse.ok) {
+           throw new Error(`HTTP ${leaderboardResponse.status}: Помилка при завантаженні лідерборду`);
+         }
+
+         const leaderboardData = await leaderboardResponse.json();
+         console.log('✅ Дані лідерборду отримані:', leaderboardData);
+
+         // Встановлюємо лідерборд
+         setLeaderboard(leaderboardData.leaderboard || []);
+
+         // Встановлюємо статистику поточного користувача
+         if (statsData.stats) {
+           const userStats = statsData.stats;
+           const leader = leaderboardData.leaderboard ? leaderboardData.leaderboard[0] : null;
+           const pointsBehind = leader ? leader.points - userStats.points : 0;
+
            setUserStats(prev => ({
              ...prev,
-             rank: currentUser.rank,
-             totalManagers: data.totalManagers,
-             totalPoints: currentUser.points,
+             rank: userStats.rank,
+             totalManagers: userStats.totalManagers,
+             totalPoints: userStats.points,
+             pointsBehind: pointsBehind > 0 ? pointsBehind : 0,
              userEmail: userEmail,
              userName: userName
            }));
+
+           console.log(`🏆 ${userName} - Ранг: ${userStats.rank}/${userStats.totalManagers}, Балів: ${userStats.points}`);
          }
 
          setError(null);
        } catch (err) {
          console.error('❌ Помилка при завантаженні:', err);
          setError(err.message);
-
-         // Використовуємо тестові дані якщо помилка
-         setLeaderboard([
-           {
-             rank: 1,
-             name: 'Andriy Shevchenko',
-             status: 'Champion',
-             points: 1850
-           },
-           {
-             rank: 2,
-             name: 'Oleh Blokhin',
-             status: 'Runner Up',
-             statusDetail: '-30 pts behind',
-             points: 1820
-           },
-           {
-             rank: 3,
-             name: 'Anatoliy Tymoshchuk',
-             status: 'Third Place',
-             statusDetail: '-35 pts behind',
-             points: 1785
-           },
-           {
-             rank: 4,
-             name: 'You',
-             points: 1650
-           }
-         ]);
        } finally {
          setLoading(false);
        }
      };
 
      fetchLeaderboard();
-   }, []);
+    }, []);
 
   const getRankBadge = (rank) => {
     const badges = { 1: '🥇', 2: '🥈', 3: '🥉' };
