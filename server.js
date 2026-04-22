@@ -2,9 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const session = require('express-session');
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const db = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 
@@ -13,34 +10,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Налаштування сесії
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'session-secret-key',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } // встановити true для HTTPS
-}));
-
-// Ініціалізація Passport
-app.use(passport.initialize());
-app.use(passport.session());
-
-// Конфігурація Google Strategy
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL || '/api/auth/google/callback'
-}, (accessToken, refreshToken, profile, done) => {
-    return done(null, profile);
-}));
-
-passport.serializeUser((user, done) => {
-    done(null, user);
-});
-
-passport.deserializeUser((user, done) => {
-    done(null, user);
-});
 
 app.use('/api/auth', authRoutes);
 

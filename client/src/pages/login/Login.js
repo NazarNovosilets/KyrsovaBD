@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Register.css'; // Використовуємо ті ж самі стилі для ідентичного вигляду
+import '../Registration/Register.css'; // Використовуємо ті ж самі стилі для ідентичного вигляду
 
 const Login = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
