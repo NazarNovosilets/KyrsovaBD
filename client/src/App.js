@@ -2,6 +2,24 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Register from './pages/Registration/Register';
 import Login from './pages/login/Login';
+import Dashboard from './pages/Dashboard/Dashboard';
+
+// ProtectedRoute компонент - перевіряє autentyfication
+const ProtectedRoute = ({ children }) => {
+  const userId = localStorage.getItem('userId');
+
+  console.log('🔐 ProtectedRoute check - userId:', userId);
+
+  if (!userId) {
+    // Якщо немає userId, редиректимо на login
+    console.log('❌ No userId found, redirecting to login');
+    return <Navigate to="/login" replace />;
+  }
+
+  // Якщо є userId, показуємо сторінку
+  console.log('✅ userId found, showing dashboard');
+  return children;
+};
 
 function App() {
   return (
@@ -9,7 +27,19 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Navigate to="/login" />} />
+
+          {/* Захищена сторінка - потрібна autentyfication */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Дефолтний маршрут - редиректить на login замість dashboard */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
   );

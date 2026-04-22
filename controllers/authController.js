@@ -7,13 +7,21 @@ exports.register = async (req, res) => {
     const defaultRole = 'user';
 
     try {
-        const hashedPassword = await bcrypt.hash(password, 10);
+        console.log(`📝 Реєстрація: ${username} (${email})`);
 
+        // 1️⃣ Хешування пароля
+        const hashedPassword = await bcrypt.hash(password, 10);
+        console.log(`🔐 Пароль захешований`);
+
+        // 2️⃣ Вставка користувача в БД
         const result = await db.query(
-            'INSERT INTO Users (FullName, Email, Password, role) VALUES ($1, $2, $3, $4) RETURNING id, email, fullname, role',
+            'INSERT INTO users (fullname, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id, email, fullname, role',
             [username, email, hashedPassword, defaultRole]
         );
 
+        console.log(`✅ Користувач створено: ID ${result.rows[0].id}`);
+
+        // 3️⃣ Формування відповіді
         res.status(201).json({
             message: 'Користувача зареєстровано!',
             userId: result.rows[0].id,
@@ -22,8 +30,9 @@ exports.register = async (req, res) => {
             role: result.rows[0].role
         });
     } catch (err) {
-        console.error(err);
+        console.error('❌ Помилка при реєстрації:', err);
         if (err.code === '23505') {
+            console.log(`⚠️  Email ${email} вже існує`);
             return res.status(400).json({ error: 'Користувач з таким Email вже існує' });
         }
         res.status(500).json({ error: 'Помилка бази даних: ' + err.message });
@@ -34,19 +43,30 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const result = await db.query('SELECT * FROM Users WHERE email = $1', [email]);
+        console.log(`🔐 Логіння: ${email}`);
+
+        // 1️⃣ Пошук користувача в БД
+        const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
 
         if (result.rows.length === 0) {
+            console.log(`❌ Користувач з email ${email} не знайдений`);
             return res.status(401).json({ error: 'Невірна пошта або пароль' });
         }
 
         const user = result.rows[0];
+        console.log(`✅ Користувач знайдений: ${user.fullname}`);
+
+        // 2️⃣ Перевірка пароля
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
+            console.log(`❌ Невірний пароль для ${email}`);
             return res.status(401).json({ error: 'Невірна пошта або пароль' });
         }
 
+        console.log(`✅ Пароль правильний, користувач увійшов`);
+
+        // 3️⃣ Формування відповіді
         res.status(200).json({
             message: 'Ви успішно увійшли!',
             userId: user.id,
@@ -55,7 +75,9 @@ exports.login = async (req, res) => {
             role: user.role
         });
     } catch (err) {
-        console.error(err);
+        console.error('❌ Помилка при логіну:', err);
         res.status(500).json({ error: 'Помилка бази даних: ' + err.message });
     }
 };
+
+module.exports = { register: exports.register, login: exports.login };

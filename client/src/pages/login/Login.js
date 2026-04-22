@@ -15,26 +15,48 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        setMessage('');
+
+        console.log('📝 Логіння з:', formData);
+
         try {
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
             });
+
+            console.log('🔄 Response status:', response.status);
+
             const data = await response.json();
+            console.log('📦 Response data:', data);
 
             if (response.ok) {
-                setMessage('✅ Вхід успішний!');
+                console.log('✅ Логін успішний!');
+                setMessage('✅ Вхід успішний! Перенаправлення...');
+
+                // 💾 Зберігаємо userId в localStorage
+                localStorage.setItem('userId', String(data.userId));
+                localStorage.setItem('email', data.email);
+                localStorage.setItem('fullName', data.fullName);
+
+                console.log('💾 Дані збережені в localStorage');
+                console.log('userId:', localStorage.getItem('userId'));
+
                 setFormData({ email: '', password: '' });
+
+                // Перенаправлюємо на дашборд
                 setTimeout(() => {
-                    navigate('/dashboard');
-                }, 1500);
-                // Тут можна додати збереження токена: localStorage.setItem('token', data.token);
+                    console.log('🚀 Перенаправляємо на /dashboard');
+                    navigate('/dashboard', { replace: true });
+                }, 1000);
             } else {
+                console.log('❌ Помилка логіну:', data.error);
                 setMessage(`❌ Помилка: ${data.error}`);
             }
         } catch (error) {
-            setMessage('❌ Помилка з\'єднання');
+            console.error('❌ Помилка з\'єднання:', error);
+            setMessage('❌ Помилка з\'єднання. Перевірте сервер');
         } finally {
             setLoading(false);
         }

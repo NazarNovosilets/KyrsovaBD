@@ -19,6 +19,10 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        setMessage('');
+
+        console.log('📝 Реєстрація з:', formData);
+
         try {
             const response = await fetch('/api/auth/register', {
                 method: 'POST',
@@ -26,17 +30,34 @@ const Register = () => {
                 body: JSON.stringify(formData),
             });
 
+            console.log('🔄 Response status:', response.status);
+
             const data = await response.json();
+            console.log('📦 Response data:', data);
+
             if (response.ok) {
-                setMessage('✅ Реєстрація успішна! Перенаправлення на логін...');
+                console.log('✅ Реєстрація успішна!');
+                setMessage('✅ Реєстрація успішна! Перенаправлення на дашборд...');
+
+                // 💾 Зберігаємо userId в localStorage
+                localStorage.setItem('userId', String(data.userId));
+                localStorage.setItem('email', data.email);
+                localStorage.setItem('fullName', data.fullName);
+
+                console.log('💾 Дані збережені в localStorage');
+
                 setFormData({ username: '', email: '', password: '' });
+
                 setTimeout(() => {
-                    navigate('/login');
-                }, 1500);
+                    console.log('🚀 Перенаправляємо на /dashboard');
+                    navigate('/dashboard', { replace: true });
+                }, 1000);
             } else {
+                console.log('❌ Помилка реєстрації:', data.error);
                 setMessage(`❌ Помилка: ${data.error}`);
             }
         } catch (error) {
+            console.error('❌ Помилка з\'єднання:', error);
             setMessage('❌ Не вдалося з\'єднатися з сервером');
         } finally {
             setLoading(false);
