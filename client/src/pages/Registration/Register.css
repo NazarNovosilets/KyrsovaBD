@@ -1,0 +1,99 @@
+.auth-container {
+    background-color: #0f172a; /* Темний фон */
+    background-image: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.auth-card {
+    background: #111827;
+    padding: 2.5rem;
+    border-radius: 1rem;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    border: 1px solid #1f2937;
+}
+
+.logo-box {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    background: #1d4ed8;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    margin: 0 auto 1.5rem;
+}
+
+h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.subtitle { color: #94a3b8; font-size: 0.9rem; margin-bottom: 2rem; }
+.welcome-title { font-size: 1.25rem; margin-bottom: 1.5rem; }
+
+.input-group {
+    text-align: left;
+    margin-bottom: 1.25rem;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 0.75rem;
+    background: #1f2937;
+    border: 1px solid #374151;
+    border-radius: 0.5rem;
+    color: white;
+    outline: none;
+    transition: border 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #2563eb;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 0.75rem;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+}
+
+.status-message {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.footer-text {
+    margin-top: 1.5rem;
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+.footer-text a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 600;
+}
