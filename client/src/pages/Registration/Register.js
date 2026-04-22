@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Register.css';
 
 const Register = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         username: '',
         email: '',
         password: ''
     });
     const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -15,6 +18,7 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
         try {
             const response = await fetch('/api/auth/register', {
                 method: 'POST',
@@ -24,12 +28,18 @@ const Register = () => {
 
             const data = await response.json();
             if (response.ok) {
-                setMessage('✅ Реєстрація успішна!');
+                setMessage('✅ Реєстрація успішна! Перенаправлення на логін...');
+                setFormData({ username: '', email: '', password: '' });
+                setTimeout(() => {
+                    navigate('/login');
+                }, 1500);
             } else {
                 setMessage(`❌ Помилка: ${data.error}`);
             }
         } catch (error) {
-            setMessage('❌ Не вдалося з’єднатися з сервером');
+            setMessage('❌ Не вдалося з\'єднатися з сервером');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -49,7 +59,9 @@ const Register = () => {
                             type="text"
                             name="username"
                             placeholder="Nazar"
+                            value={formData.username}
                             onChange={handleChange}
+                            disabled={loading}
                             required
                         />
                     </div>
@@ -59,7 +71,9 @@ const Register = () => {
                             type="email"
                             name="email"
                             placeholder="your.email@example.com"
+                            value={formData.email}
                             onChange={handleChange}
+                            disabled={loading}
                             required
                         />
                     </div>
@@ -69,17 +83,21 @@ const Register = () => {
                             type="password"
                             name="password"
                             placeholder="••••••••"
+                            value={formData.password}
                             onChange={handleChange}
+                            disabled={loading}
                             required
                         />
                     </div>
-                    <button type="submit" className="btn-primary">Sign Up</button>
+                    <button type="submit" className="btn-primary" disabled={loading}>
+                        {loading ? 'Обробка...' : 'Sign Up'}
+                    </button>
                 </form>
 
                 {message && <p className="status-message">{message}</p>}
 
                 <p className="footer-text">
-                    Already have an account? <a href="/login">Sign In</a>
+                    Already have an account? <a href="#" onClick={(e) => { e.preventDefault(); navigate('/login'); }}>Sign In</a>
                 </p>
             </div>
         </div>

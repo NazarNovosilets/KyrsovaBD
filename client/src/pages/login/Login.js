@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../Registration/Register.css'; // Використовуємо ті ж самі стилі для ідентичного вигляду
 
 const Login = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -11,6 +14,7 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
         try {
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
@@ -21,12 +25,18 @@ const Login = () => {
 
             if (response.ok) {
                 setMessage('✅ Вхід успішний!');
-                // Тут можна додати перехід на головну: window.location.href = '/dashboard';
+                setFormData({ email: '', password: '' });
+                setTimeout(() => {
+                    navigate('/dashboard');
+                }, 1500);
+                // Тут можна додати збереження токена: localStorage.setItem('token', data.token);
             } else {
                 setMessage(`❌ Помилка: ${data.error}`);
             }
         } catch (error) {
-            setMessage('❌ Помилка з’єднання');
+            setMessage('❌ Помилка з\'єднання');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -46,7 +56,9 @@ const Login = () => {
                             type="email"
                             name="email"
                             placeholder="your.email@example.com"
+                            value={formData.email}
                             onChange={handleChange}
+                            disabled={loading}
                             required
                         />
                     </div>
@@ -56,17 +68,21 @@ const Login = () => {
                             type="password"
                             name="password"
                             placeholder="••••••••"
+                            value={formData.password}
                             onChange={handleChange}
+                            disabled={loading}
                             required
                         />
                     </div>
-                    <button type="submit" className="btn-primary">Sign In</button>
+                    <button type="submit" className="btn-primary" disabled={loading}>
+                        {loading ? 'Обробка...' : 'Sign In'}
+                    </button>
                 </form>
 
                 {message && <p className="status-message">{message}</p>}
 
                 <p className="footer-text">
-                    Don't have an account? <a href="/register">Sign Up for free</a>
+                    Don't have an account? <a href="#" onClick={(e) => { e.preventDefault(); navigate('/register'); }}>Sign Up for free</a>
                 </p>
             </div>
         </div>
