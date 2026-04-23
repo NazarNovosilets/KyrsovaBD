@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Register from './pages/Registration/Register';
 import Login from './pages/login/Login';
 import Dashboard from './pages/Dashboard/Dashboard';
+import TeamBuilder from './pages/TeamBuilder/TeamBuilder';
 
 // ProtectedRoute компонент - перевіряє autentyfication
 const ProtectedRoute = ({ children }) => {
@@ -28,18 +29,28 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Захищена сторінка - потрібна autentyfication */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
+           {/* Захищена сторінка - потрібна autentyfication */}
+           <Route
+             path="/dashboard"
+             element={
+               <ProtectedRoute>
+                 <Dashboard />
+               </ProtectedRoute>
+             }
+           />
 
-          {/* Дефолтний маршрут - редиректить на login замість dashboard */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+           {/* Team Builder сторінка */}
+           <Route
+             path="/team-builder"
+             element={
+               <ProtectedRoute>
+                 <TeamBuilder />
+               </ProtectedRoute>
+             }
+           />
+
+           {/* Дефолтний маршрут - редиректить на login замість dashboard */}
+           <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
   );

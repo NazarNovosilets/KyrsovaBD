@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import './Dashboard.css';
 
 function Dashboard() {
@@ -112,13 +112,13 @@ function Dashboard() {
           <div className="logo">⚽ UPL Fantasy</div>
           <span className="league-name">Ukrainian Premier League</span>
         </div>
-        <nav className="nav-menu">
-          <a href="#dashboard" className="nav-item active">Dashboard</a>
-          <a href="#team" className="nav-item">My Team</a>
-          <a href="#leagues" className="nav-item">Leagues</a>
-          <a href="#matches" className="nav-item">Matches</a>
-          <a href="#statistics" className="nav-item">Statistics</a>
-        </nav>
+         <nav className="nav-menu">
+            <Link to="/dashboard" className="nav-item active">Dashboard</Link>
+            <Link to="/team-builder" className="nav-item">My Team</Link>
+            <a href="#leagues" className="nav-item">Leagues</a>
+            <a href="#matches" className="nav-item">Matches</a>
+            <a href="#statistics" className="nav-item">Statistics</a>
+          </nav>
         <div className="header-right">
           <button className="user-btn">👤 User</button>
           <div className="manager-info">
