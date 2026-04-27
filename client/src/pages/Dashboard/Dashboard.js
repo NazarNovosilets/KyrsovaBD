@@ -260,12 +260,12 @@ function Dashboard() {
           <span className="league-name">Ukrainian Premier League</span>
         </div>
          <nav className="nav-menu">
-            <Link to="/dashboard" className="nav-item active">Dashboard</Link>
-            <Link to="/team-builder" className="nav-item">My Team</Link>
-            <a href="#leagues" className="nav-item">Leagues</a>
-            <a href="#matches" className="nav-item">Matches</a>
-            <a href="#statistics" className="nav-item">Statistics</a>
-          </nav>
+             <Link to="/dashboard" className="nav-item active">Dashboard</Link>
+             <Link to="/team-builder" className="nav-item">My Team</Link>
+             <a href="#leagues" className="nav-item">Leagues</a>
+             <Link to="/matches" className="nav-item">Matches</Link>
+             <a href="#statistics" className="nav-item">Statistics</a>
+           </nav>
         <div className="header-right">
           <button className="user-btn">👤 User</button>
           <div className="manager-info">

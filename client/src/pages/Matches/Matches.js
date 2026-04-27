@@ -1,0 +1,306 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import './Matches.css';
+
+function Matches() {
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('fixtures');
+  const [matches, setMatches] = useState([]);
+  const [standings, setStandings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [userStats, setUserStats] = useState({
+    rank: 0,
+    totalPoints: 0,
+    teamName: 'My Team',
+    gameweek: 'GW 25'
+  });
+
+  // Мапінг кольорів команд
+  const teamColors = {
+    'Shakhtar Donetsk': { primary: '#FF6B00', secondary: '#000000' },
+    'Dynamo Kyiv': { primary: '#0066CC', secondary: '#FFFFFF' },
+    'Zorya Luhansk': { primary: '#000000', secondary: '#FFDD00' },
+    'Oleksandriya': { primary: '#FFDD00', secondary: '#0066CC' },
+    'Kolos Kovalivka': { primary: '#00AA00', secondary: '#FFFFFF' },
+    'Vorskla Poltava': { primary: '#00AA00', secondary: '#FFFFFF' },
+    'Dnipro-1': { primary: '#0066CC', secondary: '#FFFFFF' },
+    'Chornomorets': { primary: '#0066CC', secondary: '#FFDD00' },
+    'Metalurh': { primary: '#FF6B00', secondary: '#FFFFFF' },
+    'Veres': { primary: '#FF0000', secondary: '#FFFFFF' }
+  };
+
+  const getTeamColors = (teamName) => {
+    return teamColors[teamName] || { primary: '#666666', secondary: '#CCCCCC' };
+  };
+
+  // Завантаження статистики користувача
+  useEffect(() => {
+    const fetchUserStats = async () => {
+      try {
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+          navigate('/login');
+          return;
+        }
+
+        const response = await fetch(`/api/auth/stats/${userId}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.stats) {
+            setUserStats(prev => ({
+              ...prev,
+              rank: data.stats.rank || 0,
+              totalPoints: data.stats.totalPoints || 0
+            }));
+          }
+        }
+      } catch (err) {
+        console.error('Помилка при завантаженні статистики:', err);
+      }
+    };
+
+    fetchUserStats();
+  }, [navigate]);
+
+  // Завантаження матчів або таблиці при зміні таба
+  useEffect(() => {
+    fetchMatches(activeTab);
+  }, [activeTab]);
+
+  const fetchMatches = async (tab) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      let endpoint = '';
+      if (tab === 'fixtures') endpoint = '/api/auth/matches/fixtures';
+      else if (tab === 'results') endpoint = '/api/auth/matches/results';
+      else if (tab === 'standings') endpoint = '/api/auth/matches/standings';
+
+      const response = await fetch(endpoint);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const data = await response.json();
+
+      // Зберігаємо дані в правильний стейт
+      if (tab === 'standings') {
+        setStandings(data.standings || []);
+        setMatches([]); // Очищаємо матчі
+      } else {
+        setMatches(data.matches || []);
+        setStandings([]); // Очищаємо таблицю
+      }
+
+    } catch (err) {
+      console.error(`❌ Помилка:`, err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderTeamCircle = (color) => {
+    return (
+        <div
+            className="team-circle"
+            style={{ backgroundColor: color, width: '12px', height: '12px', borderRadius: '50%', display: 'inline-block' }}
+        />
+    );
+  };
+
+  return (
+      <div className="matches-page">
+        {/* Header */}
+        <header className="dashboard-header">
+          <div className="header-left">
+            <div className="logo">⚽ UPL Fantasy</div>
+            <span className="league-name">Ukrainian Premier League</span>
+          </div>
+          <nav className="nav-menu">
+            <Link to="/dashboard" className="nav-item">Dashboard</Link>
+            <Link to="/team-builder" className="nav-item">My Team</Link>
+            <Link to="/leagues" className="nav-item">Leagues</Link>
+            <Link to="/matches" className="nav-item active">Matches</Link>
+            <Link to="/statistics" className="nav-item">Statistics</Link>
+          </nav>
+          <div className="header-right">
+            <button className="user-btn">👤 User</button>
+            <div className="manager-info">
+              <span className="rank-label">Manager</span>
+              <span className="rank">Rank #{userStats.rank} • {userStats.totalPoints.toLocaleString()} pts</span>
+            </div>
+          </div>
+        </header>
+
+        {/* Main Content */}
+        <div className="matches-content">
+          <div className="match-center">
+            <div className="match-center-header">
+              <div className="match-center-title">
+                <span className="match-icon">📋</span>
+                <h1>Match Center</h1>
+              </div>
+              <p className="match-center-subtitle">Fixtures, results, and match statistics</p>
+              <button className="gameweek-selector">Gameweek 25</button>
+            </div>
+
+            {/* 🔘 Tabs */}
+            <div className="match-tabs">
+              <button
+                  className={`tab-button ${activeTab === 'fixtures' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('fixtures')}
+              >
+                📋 Fixtures
+              </button>
+              <button
+                  className={`tab-button ${activeTab === 'results' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('results')}
+              >
+                📊 Results
+              </button>
+              <button
+                  className={`tab-button ${activeTab === 'standings' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('standings')}
+              >
+                📈 Standings
+              </button>
+            </div>
+
+            {/* 📝 Контент вкладки */}
+            {loading ? (
+                <div className="loading">Завантаження...</div>
+            ) : error ? (
+                <div className="error-message">Помилка при завантаженні: {error}</div>
+            ) : activeTab === 'standings' ? (
+                /* 🏆 ТАБЛИЦЯ ЛІГИ */
+                <div className="standings-container">
+                  <h2 className="section-title">League Table</h2>
+                  <p className="section-subtitle">Current standings in the Ukrainian Premier League</p>
+
+                  <table className="standings-table">
+                    <thead>
+                    <tr>
+                      <th>#</th>
+                      <th style={{ textAlign: 'left' }}>Club</th>
+                      <th>P</th>
+                      <th>W</th>
+                      <th>D</th>
+                      <th>L</th>
+                      <th>GF</th>
+                      <th>GA</th>
+                      <th>GD</th>
+                      <th>Pts</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {standings.length > 0 ? standings.map((team, index) => (
+                        <tr key={team.id}>
+                          <td className="rank-col">{index + 1}</td>
+                          <td className="team-cell">
+                            <div className="team-colors" style={{ display: 'inline-flex', gap: '2px', marginRight: '10px' }}>
+                              {renderTeamCircle(getTeamColors(team.name).primary)}
+                              {renderTeamCircle(getTeamColors(team.name).secondary)}
+                            </div>
+                            <span className="team-name">{team.name}</span>
+                          </td>
+                          <td>{team.played}</td>
+                          <td>{team.won}</td>
+                          <td>{team.drawn}</td>
+                          <td>{team.lost}</td>
+                          <td>{team.gf}</td>
+                          <td>{team.ga}</td>
+                          <td style={{ color: team.gd > 0 ? '#00AA00' : team.gd < 0 ? '#FF0000' : 'inherit', fontWeight: 'bold' }}>
+                            {team.gd > 0 ? `+${team.gd}` : team.gd}
+                          </td>
+                          <td className="pts-col" style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{team.points}</td>
+                        </tr>
+                    )) : (
+                        <tr><td colSpan="10" style={{ textAlign: 'center', padding: '2rem' }}>Немає даних для таблиці</td></tr>
+                    )}
+                    </tbody>
+                  </table>
+                </div>
+            ) : matches.length === 0 ? (
+                /* 🚫 НЕМАЄ МАТЧІВ */
+                <div className="no-data-message" style={{ textAlign: 'center', padding: '2rem', color: '#888' }}>
+                  Немає матчів для відображення
+                </div>
+            ) : (
+                /* ⚽ СПИСОК МАТЧІВ (Fixtures / Results) */
+                <div className="matches-list">
+                  <h2 className="section-title">
+                    {activeTab === 'fixtures' ? 'Upcoming Matches' : 'Latest Results'}
+                  </h2>
+                  <p className="section-subtitle">
+                    {activeTab === 'fixtures' ? 'Next fixtures in the Ukrainian Premier League' : 'Recent match scores and statistics'}
+                  </p>
+
+                  {matches.map((match) => {
+                    const homeColors = getTeamColors(match.homeTeam);
+                    const awayColors = getTeamColors(match.awayTeam);
+
+                    // Парсимо рахунок для красивого відображення у вкладці Results
+                    const [homeGoals, awayGoals] = (match.score || '0:0').split(':');
+
+                    return (
+                        <div key={match.id} className="match-card">
+                          <div className="match-header">
+                            <span className="match-date">📅 {match.date}</span>
+                            <span className="match-time">⏰ {match.time}</span>
+                          </div>
+
+                          <div className="match-body">
+                            {/* Home Team */}
+                            <div className="team home-team">
+                              <div className="team-colors">
+                                {renderTeamCircle(homeColors.primary)}
+                                {renderTeamCircle(homeColors.secondary)}
+                              </div>
+                              <div className="team-info">
+                                <div className="team-name">{match.homeTeam}</div>
+                                <div className="team-code">{match.homeCode}</div>
+                              </div>
+                            </div>
+
+                            {/* VS або розпарсений Рахунок */}
+                            <div className="vs-container">
+                              {activeTab === 'results' ? (
+                                  <div className="score-display" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ background: '#f0f0f0', color: '#1a1a1a', padding: '6px 12px', borderRadius: '6px', fontWeight: 'bold', fontSize: '1.2rem' }}>
+                              {homeGoals?.trim() || '0'}
+                            </span>
+                                    <span style={{ fontWeight: 'bold', color: '#666' }}>:</span>
+                                    <span style={{ background: '#f0f0f0', color: '#1a1a1a', padding: '6px 12px', borderRadius: '6px', fontWeight: 'bold', fontSize: '1.2rem' }}>
+                              {awayGoals?.trim() || '0'}
+                            </span>
+                                  </div>
+                              ) : (
+                                  <span className="vs-text">vs</span>
+                              )}
+                            </div>
+
+                            {/* Away Team */}
+                            <div className="team away-team">
+                              <div className="team-info">
+                                <div className="team-name">{match.awayTeam}</div>
+                                <div className="team-code">{match.awayCode}</div>
+                              </div>
+                              <div className="team-colors">
+                                {renderTeamCircle(awayColors.primary)}
+                                {renderTeamCircle(awayColors.secondary)}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    );
+                  })}
+                </div>
+            )}
+          </div>
+        </div>
+      </div>
+  );
+}
+
+export default Matches;

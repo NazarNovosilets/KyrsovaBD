@@ -1,0 +1,543 @@
+.matches-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+/* Header Styles */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(15, 23, 42, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  sticky: top;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fbbf24;
+  letter-spacing: 0.5px;
+}
+
+.league-name {
+  font-size: 0.875rem;
+  color: #94a3b8;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-item {
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  border-bottom: 2px solid transparent;
+  padding-bottom: 0.25rem;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  color: #fbbf24;
+  border-bottom-color: #fbbf24;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.user-btn {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+}
+
+.user-btn:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+.manager-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.rank-label {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.rank {
+  font-size: 0.875rem;
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+/* Main Content */
+.matches-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Info Bar */
+.info-bar {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: 150px;
+}
+
+.info-label {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.gameweek-badge {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1));
+  border-radius: 0.5rem;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  min-width: 150px;
+}
+
+.gameweek-label {
+  font-size: 0.75rem;
+  color: #10b981;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.gameweek-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #10b981;
+}
+
+.deadline {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  line-height: 1.2;
+}
+
+/* Match Center */
+.match-center {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.match-center-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.match-center-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.match-icon {
+  font-size: 2rem;
+}
+
+.match-center-title h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.match-center-subtitle {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.gameweek-selector {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.gameweek-selector:hover {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+/* Match Tabs */
+.match-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1rem;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1rem;
+  padding-bottom: 1.5rem;
+}
+
+.tab-button:hover {
+  color: #f1f5f9;
+}
+
+.tab-button.active {
+  color: #60a5fa;
+  border-bottom-color: #60a5fa;
+}
+
+/* Matches List */
+.matches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+}
+
+.section-subtitle {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  margin: 0 0 1.5rem 0;
+}
+
+/* Match Card */
+.match-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.match-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.match-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  color: #94a3b8;
+}
+
+.match-date,
+.match-time {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.match-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Team Styles */
+.team {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.home-team {
+  justify-content: flex-start;
+}
+
+.away-team {
+  justify-content: flex-end;
+  flex-direction: row-reverse;
+}
+
+.team-colors {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.team-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.team-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.team-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.team-code {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* VS Container */
+.vs-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 0.95rem;
+  min-width: 60px;
+}
+
+.vs-text {
+  opacity: 0.7;
+}
+
+/* Loading & Error */
+.loading,
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  color: #94a3b8;
+  font-size: 1rem;
+}
+
+.error-message {
+  color: #ef4444;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .nav-menu {
+    gap: 1rem;
+  }
+
+  .nav-item {
+    font-size: 0.85rem;
+  }
+
+  .info-bar {
+    gap: 1rem;
+  }
+
+  .match-center {
+    padding: 1.5rem;
+  }
+
+  .match-center-title h1 {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .header-left {
+    width: 100%;
+  }
+
+  .nav-menu {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .info-bar {
+    flex-direction: column;
+  }
+
+  .info-item,
+  .gameweek-badge {
+    min-width: unset;
+  }
+
+  .match-center-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .match-body {
+    gap: 1rem;
+  }
+
+  .team-colors {
+    gap: 0.3rem;
+  }
+
+  .team-circle {
+    width: 32px;
+    height: 32px;
+  }
+
+  .team-name {
+    font-size: 0.9rem;
+  }
+
+  .match-card {
+    padding: 1rem;
+  }
+
+  .match-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    font-size: 1.25rem;
+  }
+
+  .nav-menu {
+    gap: 0.25rem;
+  }
+
+  .nav-item {
+    font-size: 0.75rem;
+    padding-bottom: 0;
+  }
+
+  .match-center-title h1 {
+    font-size: 1.5rem;
+  }
+
+  .team-name {
+    font-size: 0.8rem;
+  }
+
+  .team-code {
+    font-size: 0.7rem;
+  }
+
+  .vs-text {
+    font-size: 0.85rem;
+  }
+}
+
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  color: white;
+  background-color: #1a2235; /* Темний фон як на скріншоті */
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.standings-table th,
+.standings-table td {
+  padding: 12px 16px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.standings-table th {
+  color: #8892b0;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.standings-table tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.standings-table .team-cell {
+  text-align: left;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+}

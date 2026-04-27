@@ -4,6 +4,7 @@ import Register from './pages/Registration/Register';
 import Login from './pages/login/Login';
 import Dashboard from './pages/Dashboard/Dashboard';
 import TeamBuilder from './pages/TeamBuilder/TeamBuilder';
+import Matches from './pages/Matches/Matches';
 
 // ProtectedRoute компонент - перевіряє autentyfication
 const ProtectedRoute = ({ children }) => {
@@ -40,17 +41,27 @@ function App() {
            />
 
            {/* Team Builder сторінка */}
-           <Route
-             path="/team-builder"
-             element={
-               <ProtectedRoute>
-                 <TeamBuilder />
-               </ProtectedRoute>
-             }
-           />
+            <Route
+              path="/team-builder"
+              element={
+                <ProtectedRoute>
+                  <TeamBuilder />
+                </ProtectedRoute>
+              }
+            />
 
-           {/* Дефолтний маршрут - редиректить на login замість dashboard */}
-           <Route path="/" element={<Navigate to="/login" replace />} />
+            {/* Matches сторінка */}
+            <Route
+              path="/matches"
+              element={
+                <ProtectedRoute>
+                  <Matches />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Дефолтний маршрут - редиректить на login замість dashboard */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
   );
