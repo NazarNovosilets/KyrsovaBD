@@ -15,6 +15,8 @@ export default function TeamBuilder() {
   const [search, setSearch] = useState('');
   const [budget] = useState(100);
 
+  console.log('🔍 TeamBuilder RENDER: showModal=', showModal, ', selectedPos=', selectedPos);
+
   const userId = localStorage.getItem('userId');
   const userName = localStorage.getItem('fullName');
 
@@ -144,42 +146,43 @@ export default function TeamBuilder() {
     setError(null);
   };
 
-  const selectPlayer = (player) => {
-    if (!posReqs[selectedPos]) return;
+   const selectPlayer = (player) => {
+     console.log('🎯 selectPlayer called with:', player);
+     if (!posReqs[selectedPos]) return;
 
-    if (!player || String(player.position || '').toUpperCase() !== selectedPos) {
-      setError('Invalid player position');
-      return;
-    }
+     if (!player || String(player.position || '').toUpperCase() !== selectedPos) {
+       setError('Invalid player position');
+       return;
+     }
 
-    const currentCount = selectedPlayers.filter(p => p.position === selectedPos).length;
-    if (currentCount >= posReqs[selectedPos]) {
-      setError(`Max ${selectedPos} reached`);
-      return;
-    }
+     const currentCount = selectedPlayers.filter(p => p.position === selectedPos).length;
+     if (currentCount >= posReqs[selectedPos]) {
+       setError(`Max ${selectedPos} reached`);
+       return;
+     }
 
-    const playerPrice = Number(player.price);
-    if (!Number.isFinite(playerPrice)) {
-      setError('Invalid player price');
-      return;
-    }
+     const playerPrice = Number(player.price);
+     if (!Number.isFinite(playerPrice)) {
+       setError('Invalid player price');
+       return;
+     }
 
-    const totalCost = selectedPlayers.reduce((s, p) => s + (Number(p.price) || 0), 0) + playerPrice;
-    if (totalCost > budget) {
-      setError('Budget exceeded');
-      return;
-    }
+     const totalCost = selectedPlayers.reduce((s, p) => s + (Number(p.price) || 0), 0) + playerPrice;
+     if (totalCost > budget) {
+       setError('Budget exceeded');
+       return;
+     }
 
-    if (selectedPlayers.some(p => p.id === player.id)) {
-      setError('Player already in team');
-      return;
-    }
+     if (selectedPlayers.some(p => p.id === player.id)) {
+       setError('Player already in team');
+       return;
+     }
 
-    setSelectedPlayers([...selectedPlayers, player]);
-    setError(null);
-    setShowModal(false);
-    setSearch('');
-  };
+     setSelectedPlayers([...selectedPlayers, player]);
+     setError(null);
+     setShowModal(false);
+     setSearch('');
+   };
 
   const removePlayer = (id) => {
     setSelectedPlayers(selectedPlayers.filter(p => p.id !== id));
@@ -223,19 +226,27 @@ export default function TeamBuilder() {
   if (loading) return <div className="team-builder-loading">Loading...</div>;
 
   return (
-      <div className="team-builder">
-        <header className="team-builder-header">
-          <div className="header-left">
-            <div className="logo">⚽ UPL Fantasy</div>
-          </div>
-          <nav className="nav-menu">
-            <Link to="/dashboard" className="nav-item">Dashboard</Link>
-            <Link to="/team-builder" className="nav-item active">My Team</Link>
-          </nav>
-          <div className="header-right">
-            <span className="rank">{userName}</span>
-          </div>
-        </header>
+       <div className="team-builder">
+         <header className="team-builder-header">
+           <div className="header-left">
+             <div className="logo">⚽ UPL Fantasy</div>
+             <span className="league-name">Ukrainian Premier League</span>
+           </div>
+           <nav className="nav-menu">
+             <Link to="/dashboard" className="nav-item">Dashboard</Link>
+             <Link to="/team-builder" className="nav-item active">My Team</Link>
+             <a href="#leagues" className="nav-item">Leagues</a>
+             <a href="#matches" className="nav-item">Matches</a>
+             <a href="#statistics" className="nav-item">Statistics</a>
+           </nav>
+           <div className="header-right">
+             <button className="user-btn">👤 User</button>
+             <div className="manager-info">
+               <span className="rank-label">Manager</span>
+               <span className="rank">{userName}</span>
+             </div>
+           </div>
+         </header>
 
         <div className="team-builder-content">
           <div className="team-info-bar">
@@ -282,7 +293,13 @@ export default function TeamBuilder() {
                           <div
                               key={`empty-${pos}-${i}`}
                               className="player-slot empty"
-                              onClick={() => { setSelectedPos(pos); setShowModal(true); setSearch(''); }}
+                              onClick={() => {
+                                console.log('🔴 CLICKED EMPTY SLOT FOR POSITION:', pos);
+                                setSelectedPos(pos);
+                                setShowModal(true);
+                                setSearch('');
+                                console.log('✅ setShowModal(true) and setSelectedPos:', pos);
+                              }}
                           >
                             <div className="player-placeholder">+</div>
                             <div className="player-pos">{pos}</div>
@@ -313,15 +330,18 @@ export default function TeamBuilder() {
         </div>
 
          {showModal && (
-             <div className="modal-overlay" onClick={() => { setShowModal(false); setSearch(''); }}>
-               <div className="modal" onClick={(e) => e.stopPropagation()}>
-                 <div className="modal-header-new">
+             <>
+               {console.log('📦 Modal rendering with showModal=true, selectedPos=', selectedPos)}
+               <div className="modal-overlay" onClick={() => { setShowModal(false); setSearch(''); }}>
+                 <div className="modal" onClick={(e) => e.stopPropagation()}>
+                   <div className="modal-header-new" style={{border: '2px solid red'}}>
+                     {console.log('🎨 modal-header-new rendered with classes: modal-header-new')}
                    <div className="modal-title-section">
                      <h2>Select {selectedPos}</h2>
                      <p className="modal-subtitle">Choose a player for your squad</p>
                    </div>
                    <div className="modal-budget-section">
-                     <span className="budget-label">Budget:</span>
+                     <span className="budget-label">Budget</span>
                      <span className="budget-amount">£{(budget - selectedPlayers.reduce((s, p) => s + p.price, 0)).toFixed(1)}M</span>
                    </div>
                  </div>
@@ -371,9 +391,10 @@ export default function TeamBuilder() {
                                </div>
                            ))
                    )}
-                 </div>
-               </div>
-             </div>
+                  </div>
+                </div>
+              </div>
+             </>
          )}
       </div>
   );

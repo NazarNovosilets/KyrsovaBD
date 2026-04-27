@@ -20,25 +20,28 @@
 }
 
 .header-left {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+   display: flex;
+   align-items: center;
+   gap: 1rem;
 }
 
 .logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #fbbf24;
+   font-size: 1.5rem;
+   font-weight: bold;
+   color: #fbbf24;
 }
 
 .league-name {
-  font-size: 0.85rem;
-  color: #9ca3af;
+   font-size: 0.85rem;
+   color: #9ca3af;
 }
 
 .nav-menu {
-  display: flex;
-  gap: 2rem;
+   display: flex;
+   gap: 2rem;
+   position: absolute;
+   left: 50%;
+   transform: translateX(-50%);
 }
 
 .nav-item {
@@ -57,9 +60,23 @@
 }
 
 .header-right {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
+   display: flex;
+   align-items: center;
+   gap: 1.5rem;
+}
+
+.user-btn {
+   background: rgba(255, 255, 255, 0.1);
+   border: 1px solid rgba(255, 255, 255, 0.2);
+   color: #fff;
+   padding: 0.5rem 1rem;
+   border-radius: 0.5rem;
+   cursor: pointer;
+   transition: all 0.3s ease;
+}
+
+.user-btn:hover {
+   background: rgba(255, 255, 255, 0.15);
 }
 
 .manager-info {
@@ -405,27 +422,33 @@ hr {
    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
  }
 
- /* Updated Modal Header */
+ /* Updated Modal Header - Dashboard Style */
  .modal-header-new {
-   padding: 1.5rem;
+   padding: 1rem 1.5rem;
    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
    display: flex;
    justify-content: space-between;
-   align-items: flex-start;
+   align-items: center;
    gap: 2rem;
+ }
+
+ .modal-title-section {
+   display: flex;
+   align-items: center;
+   gap: 1rem;
+   flex: 1;
  }
 
  .modal-title-section h2 {
    margin: 0;
-   font-size: 1.5rem;
+   font-size: 1.25rem;
    color: #fff;
    font-weight: 700;
-   letter-spacing: 0.5px;
  }
 
  .modal-subtitle {
-   margin: 0.5rem 0 0 0;
-   font-size: 0.9rem;
+   margin: 0;
+   font-size: 0.85rem;
    color: #9ca3af;
  }
 
@@ -433,11 +456,12 @@ hr {
    display: flex;
    flex-direction: column;
    align-items: flex-end;
+   gap: 0.25rem;
    white-space: nowrap;
  }
 
  .budget-label {
-   font-size: 0.85rem;
+   font-size: 0.75rem;
    color: #9ca3af;
    text-transform: uppercase;
    letter-spacing: 0.05em;
@@ -445,10 +469,9 @@ hr {
  }
 
  .budget-amount {
-   font-size: 1.25rem;
+   font-size: 1rem;
    color: #10b981;
    font-weight: 700;
-   margin-top: 0.25rem;
  }
 
  /* Search Section */
@@ -641,37 +664,44 @@ hr {
 }
 
 @media (max-width: 768px) {
-  .team-builder-header {
-    flex-direction: column;
-    gap: 1rem;
-  }
+   .team-builder-header {
+     flex-direction: column;
+     gap: 1rem;
+   }
 
-  .nav-menu {
-    width: 100%;
-    justify-content: center;
-  }
+   .nav-menu {
+     width: 100%;
+     justify-content: center;
+     position: static;
+     transform: none;
+   }
 
-  .team-info-bar {
-    grid-template-columns: repeat(2, 1fr);
-  }
+   .header-right {
+     width: 100%;
+     justify-content: space-between;
+   }
 
-  .pitch-row {
-    gap: 0.5rem;
-  }
+   .team-info-bar {
+     grid-template-columns: repeat(2, 1fr);
+   }
 
-  .player-slot {
-    min-width: 80px;
-    padding: 0.75rem;
-  }
+   .pitch-row {
+     gap: 0.5rem;
+   }
 
-  .player-badge {
-    width: 50px;
-    height: 50px;
-    font-size: 1.2rem;
-  }
+   .player-slot {
+     min-width: 80px;
+     padding: 0.75rem;
+   }
 
-  .right-sidebar {
-    flex-direction: column;
-  }
+   .player-badge {
+     width: 50px;
+     height: 50px;
+     font-size: 1.2rem;
+   }
+
+   .right-sidebar {
+     flex-direction: column;
+   }
 }
 
