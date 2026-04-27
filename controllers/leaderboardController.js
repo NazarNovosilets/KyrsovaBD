@@ -40,11 +40,32 @@ exports.getLeaderboard = async (req, res) => {
         }
 
         // 2️⃣ ПАРСИНГ ДАНИХ - Трансформуємо дані для фронтенду
-        const leaderboard = filteredUsers.map((user, index) => {
+        const leaderboardWithTeams = await Promise.all(filteredUsers.map(async (user, index) => {
             const fullname = user.fullname || user.FullName || 'Unknown';
             const email = user.email || user.Email || 'unknown@email.com';
             const points = user.totalpoints || user.TotalPoints || 0;
             const id = user.id || user.Id || index;
+
+            // 🔍 Отримуємо дані команди користувача
+            let teamData = null;
+            try {
+                const teamResult = await db.query(
+                    `SELECT ft.id, ft.teamname, ft.totalseasonpoints
+                     FROM fantasyteams ft
+                     WHERE ft.userid = $1`,
+                    [id]
+                );
+                if (teamResult.rows.length > 0) {
+                    teamData = {
+                        id: teamResult.rows[0].id,
+                        name: teamResult.rows[0].teamname,
+                        points: teamResult.rows[0].totalseasonpoints || 0
+                    };
+                    console.log(`   ⚽ Команда: ${teamData.name} - ${teamData.points} поінтів`);
+                }
+            } catch (teamErr) {
+                console.error(`   ⚠️ Помилка при отриманні команди користувача ${id}:`, teamErr.message);
+            }
 
             console.log(`  ${index + 1}. ${fullname} - ${points} балів`);
 
@@ -53,9 +74,22 @@ exports.getLeaderboard = async (req, res) => {
                 name: fullname,
                 email: email,
                 points: parseInt(points) || 0,
-                id: id
+                id: id,
+                team: teamData
             };
-        });
+        }));
+
+        // 3️⃣ ФІЛЬТРУВАННЯ - Показуємо тільки користувачів з командою
+        const leaderboard = leaderboardWithTeams.filter((manager, index) => {
+            if (!manager.team) {
+                console.log(`   ⏭️  Пропускаємо ${manager.name} - немає команди`);
+                return false;
+            }
+            return true;
+        }).map((manager, index) => ({
+            ...manager,
+            rank: index + 1
+        }));
 
         console.log('✅ Дані парсенні успішно');
 

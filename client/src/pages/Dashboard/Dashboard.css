@@ -185,6 +185,16 @@
   transform: translateY(-2px);
 }
 
+.team-value-card {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.08));
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.team-value-card:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.12));
+  border-color: rgba(16, 185, 129, 0.5);
+}
+
 .stat-header {
   font-size: 0.85rem;
   color: #9ca3af;
@@ -360,8 +370,21 @@
 }
 
 .manager-status {
-  font-size: 0.85rem;
-  color: #9ca3af;
+   font-size: 0.85rem;
+   color: #9ca3af;
+}
+
+.team-info {
+   font-size: 0.85rem;
+   color: #10b981;
+   display: flex;
+   align-items: center;
+   gap: 0.25rem;
+}
+
+.team-points {
+   font-weight: 600;
+   color: #10b981;
 }
 
 .manager-points {
