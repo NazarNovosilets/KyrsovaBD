@@ -312,33 +312,69 @@ export default function TeamBuilder() {
           </div>
         </div>
 
-        {showModal && (
-            <div className="modal-overlay" onClick={() => { setShowModal(false); setSearch(''); }}>
-              <div className="modal" onClick={(e) => e.stopPropagation()}>
-                <div className="modal-header">
-                  <h2>Select {selectedPos}</h2>
-                  <input
-                      type="text"
-                      placeholder="Search player..."
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      className="search-input"
-                  />
-                </div>
-                <div className="modal-body">
-                  {players
-                      .filter(p => p.position === selectedPos && !selectedPlayers.some(sp => sp.id === p.id))
-                      .filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
-                      .map(p => (
-                          <div key={p.id} className="player-row" onClick={() => selectPlayer(p)}>
-                            <span>{p.name} ({p.team})</span>
-                            <span>£{p.price}M</span>
-                          </div>
-                      ))}
-                </div>
-              </div>
-            </div>
-        )}
+         {showModal && (
+             <div className="modal-overlay" onClick={() => { setShowModal(false); setSearch(''); }}>
+               <div className="modal" onClick={(e) => e.stopPropagation()}>
+                 <div className="modal-header-new">
+                   <div className="modal-title-section">
+                     <h2>Select {selectedPos}</h2>
+                     <p className="modal-subtitle">Choose a player for your squad</p>
+                   </div>
+                   <div className="modal-budget-section">
+                     <span className="budget-label">Budget:</span>
+                     <span className="budget-amount">£{(budget - selectedPlayers.reduce((s, p) => s + p.price, 0)).toFixed(1)}M</span>
+                   </div>
+                 </div>
+
+                 <div className="modal-search-section">
+                   <input
+                       type="text"
+                       placeholder="Search players..."
+                       value={search}
+                       onChange={(e) => setSearch(e.target.value)}
+                       className="search-input-new"
+                   />
+                 </div>
+
+                 <div className="modal-body-new">
+                   {players
+                       .filter(p => p.position === selectedPos && !selectedPlayers.some(sp => sp.id === p.id))
+                       .filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
+                       .length === 0 ? (
+                       <div className="no-players-message">No players found</div>
+                   ) : (
+                       players
+                           .filter(p => p.position === selectedPos && !selectedPlayers.some(sp => sp.id === p.id))
+                           .filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
+                           .map(p => (
+                               <div key={p.id} className="player-card" onClick={() => selectPlayer(p)}>
+                                 <div className="player-card-left">
+                                   <div className="player-card-avatar">⚽</div>
+                                   <div className="player-card-info">
+                                     <div className="player-card-name">{p.name}</div>
+                                     <div className="player-card-team">{p.team}</div>
+                                   </div>
+                                 </div>
+                                 <div className="player-card-right">
+                                   <div className="player-position-badge">{p.position}</div>
+                                   <div className="player-card-stats">
+                                     <div className="stat-item">
+                                       <span className="stat-label">Price</span>
+                                       <span className="stat-value price">£{p.price}M</span>
+                                     </div>
+                                     <div className="stat-item">
+                                       <span className="stat-label">Points</span>
+                                       <span className="stat-value points">{p.points}</span>
+                                     </div>
+                                   </div>
+                                 </div>
+                               </div>
+                           ))
+                   )}
+                 </div>
+               </div>
+             </div>
+         )}
       </div>
   );
 }
