@@ -7,6 +7,7 @@ const footballerController = require('../controllers/footballerController');
 router.get('/all', userController.getAllUsers);
 router.delete('/:userId', userController.deleteUser);
 router.put('/:userId', userController.updateUser);
+router.patch('/:userId/role', userController.updateUserRole);
 
 // 🏈 Footballer routes
 router.get('/footballers/all', footballerController.getAllFootballers);

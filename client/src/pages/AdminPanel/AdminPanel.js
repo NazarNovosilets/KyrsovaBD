@@ -11,6 +11,9 @@ const AdminPanel = () => {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [adminName, setAdminName] = useState('');
+    const [showRoleModal, setShowRoleModal] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [newRole, setNewRole] = useState('standard');
     const [stats, setStats] = useState({
         totalUsers: 0,
         activeToday: 0,
@@ -82,8 +85,36 @@ const AdminPanel = () => {
         }
     };
 
-    const handleEditUser = (userId) => {
-        console.log('✏️ Редагування користувача:', userId);
+    const handleChangeRole = (user) => {
+        setSelectedUser(user);
+        setNewRole(user.role);
+        setShowRoleModal(true);
+    };
+
+    const handleSaveRole = async () => {
+        if (!selectedUser) return;
+
+        try {
+            console.log(`🔄 Зміна ролі користувача ${selectedUser.id} на ${newRole}`);
+            const response = await fetch(`/api/users/${selectedUser.id}/role`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ role: newRole })
+            });
+
+            if (response.ok) {
+                console.log('✅ Роль успішно змінена');
+                setShowRoleModal(false);
+                setSelectedUser(null);
+                fetchUsers();
+            } else {
+                const errorData = await response.json();
+                alert('❌ Помилка: ' + errorData.error);
+            }
+        } catch (error) {
+            console.error('❌ Помилка:', error);
+            alert('❌ Помилка при зміні ролі');
+        }
     };
 
     const filteredUsers = users.filter(user =>
@@ -250,14 +281,14 @@ const AdminPanel = () => {
                                                 </td>
                                                 <td className="role-cell">
                                                     <span className={`role-badge ${user.role}`}>
-                                                        {user.role === 'admin' ? '👑 Admin' : user.role === 'premium' ? '⭐ Premium' : '📊 Standard'}
+                                                        {user.role === 'admin' ? '👑 Admin' : user.role === 'analyst' ? '📊 Analyst' : '👤 User'}
                                                     </span>
                                                 </td>
                                                 <td className="actions-cell">
                                                     <button
                                                         className="btn-action btn-edit"
-                                                        onClick={() => handleEditUser(user.id)}
-                                                        title="Редагувати"
+                                                        onClick={() => handleChangeRole(user)}
+                                                        title="Змінити роль"
                                                     >
                                                         ✏️
                                                     </button>
@@ -280,6 +311,78 @@ const AdminPanel = () => {
                                     )}
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Change Role Modal */}
+            {showRoleModal && selectedUser && (
+                <div className="modal-overlay">
+                    <div className="modal-content" style={{ maxWidth: '400px' }}>
+                        <div className="modal-header">
+                            <h2>Змінити роль користувача</h2>
+                            <button
+                                className="btn-close"
+                                onClick={() => {
+                                    setShowRoleModal(false);
+                                    setSelectedUser(null);
+                                }}
+                            >
+                                ✕
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            <div className="form-group">
+                                <label>Користувач</label>
+                                <p style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+                                    {selectedUser.fullname}
+                                </p>
+                                <p style={{ fontSize: '0.9rem', color: '#888' }}>
+                                    {selectedUser.email}
+                                </p>
+                            </div>
+                            <div className="form-group">
+                                <label>Поточна роль</label>
+                                <p style={{ fontSize: '1rem', color: '#0066cc' }}>
+                                    {selectedUser.role === 'admin' ? '👑 Admin' : selectedUser.role === 'analyst' ? '📊 Analyst' : '👤 User'}
+                                </p>
+                            </div>
+                            <div className="form-group">
+                                <label>Нова роль</label>
+                                <select
+                                    value={newRole}
+                                    onChange={(e) => setNewRole(e.target.value)}
+                                    style={{
+                                        width: '100%',
+                                        padding: '10px',
+                                        borderRadius: '6px',
+                                        border: '1px solid #ddd',
+                                        fontSize: '1rem'
+                                    }}
+                                >
+                                    <option value="user">👤 User</option>
+                                    <option value="analyst">📊 Analyst</option>
+                                    <option value="admin">👑 Admin</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="modal-footer">
+                            <button
+                                className="btn-cancel"
+                                onClick={() => {
+                                    setShowRoleModal(false);
+                                    setSelectedUser(null);
+                                }}
+                            >
+                                Скасувати
+                            </button>
+                            <button
+                                className="btn-submit"
+                                onClick={handleSaveRole}
+                            >
+                                Змінити роль
+                            </button>
                         </div>
                     </div>
                 </div>

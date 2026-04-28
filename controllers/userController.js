@@ -109,9 +109,53 @@ exports.updateUser = async (req, res) => {
     }
 };
 
+exports.updateUserRole = async (req, res) => {
+    const { userId } = req.params;
+    const { role } = req.body;
+
+    try {
+        console.log(`🔄 Спроба змінити роль користувача ${userId} на ${role}`);
+
+        // Перевіряємо чи користувач існує та чи він не адмін
+        const userCheck = await db.query(
+            'SELECT id, role FROM users WHERE id = $1',
+            [userId]
+        );
+
+        if (userCheck.rows.length === 0) {
+            console.log(`❌ Користувач ${userId} не знайдений`);
+            return res.status(404).json({ error: 'Користувач не знайдений' });
+        }
+
+        // Перевіряємо валідність нової ролі
+        const validRoles = ['user', 'analyst', 'admin'];
+        if (!validRoles.includes(role)) {
+            return res.status(400).json({
+                error: 'Невалідна роль. Дозволені ролі: user, analyst, admin'
+            });
+        }
+
+        // Оновлюємо роль
+        const result = await db.query(
+            'UPDATE users SET role = $1 WHERE id = $2 RETURNING id, fullname, email, role',
+            [role, userId]
+        );
+
+        console.log(`✅ Роль користувача ${userId} змінена на ${role}`);
+        res.status(200).json({
+            message: 'Роль користувача успішно змінена',
+            user: result.rows[0]
+        });
+    } catch (err) {
+        console.error('❌ Помилка при зміні ролі користувача:', err);
+        res.status(500).json({ error: 'Помилка бази даних: ' + err.message });
+    }
+};
+
 module.exports = {
     getAllUsers: exports.getAllUsers,
     deleteUser: exports.deleteUser,
-    updateUser: exports.updateUser
+    updateUser: exports.updateUser,
+    updateUserRole: exports.updateUserRole
 };
 
