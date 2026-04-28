@@ -29,4 +29,11 @@ router.get('/matches/standings', matchController.getStandings);
 router.get('/matches/results', matchController.getResults);
 router.get('/matches/:matchId', matchController.getMatchById);
 
+const clubController = require('../controllers/clubController');
+
+// 🏢 Club routes
+router.get('/clubs', clubController.getAllClubs);
+router.delete('/clubs/:id', clubController.deleteClub);
+
+router.post('/clubs', clubController.addClub);
 module.exports = router;

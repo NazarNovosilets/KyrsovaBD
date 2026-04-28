@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FootballersPanel from './FootballersPanel';
 import './AdminPanel.css';
+import ClubsPanel from './ClubsPanel';
 
 const AdminPanel = () => {
     const navigate = useNavigate();
@@ -125,6 +126,12 @@ const AdminPanel = () => {
                     onClick={() => setActiveTab('footballers')}
                 >
                     ⚽ Footballers Database
+                </button>
+                <button
+                    className={`tab-button ${activeTab === 'clubs' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('clubs')}
+                >
+                    🏢 Club Management
                 </button>
             </div>
 
@@ -281,6 +288,9 @@ const AdminPanel = () => {
             {/* Footballers Tab */}
             {activeTab === 'footballers' && (
                 <FootballersPanel />
+            )}
+            {activeTab === 'clubs' && (
+                <ClubsPanel />
             )}
         </div>
     );

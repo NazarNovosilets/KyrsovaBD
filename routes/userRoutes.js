@@ -14,5 +14,11 @@ router.post('/footballers/add', footballerController.addFootballer);
 router.put('/footballers/:footballerId', footballerController.updateFootballer);
 router.delete('/footballers/:footballerId', footballerController.deleteFootballer);
 
+
+const clubController = require('../controllers/clubController');
+
+// 🏢 Club routes
+router.get('/clubs', clubController.getAllClubs);
+router.delete('/clubs/:id', clubController.deleteClub);
 module.exports = router;
 
