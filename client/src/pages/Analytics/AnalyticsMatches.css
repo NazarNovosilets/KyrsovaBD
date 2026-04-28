@@ -242,6 +242,213 @@
   color: #fecaca;
 }
 
+.analytics-report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.analytics-report-filters {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.analytics-report-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.analytics-report-filters input {
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 0.55rem;
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 0.4rem 0.55rem;
+}
+
+.analytics-report-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.analytics-report-stat {
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 0.9rem;
+  background: rgba(13, 23, 42, 0.82);
+  padding: 0.9rem 1rem;
+}
+
+.analytics-report-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.analytics-report-card {
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 1rem;
+  background: rgba(13, 23, 42, 0.82);
+  padding: 0.95rem 1rem;
+  box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.08);
+}
+
+.analytics-report-card h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  color: #e2e8f0;
+}
+
+.analytics-report-stat span {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  display: block;
+}
+
+.analytics-report-stat strong {
+  margin-top: 0.3rem;
+  display: block;
+  font-size: 1.8rem;
+}
+
+.analytics-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  max-height: 320px;
+  overflow: auto;
+  padding-right: 0.25rem;
+}
+
+.analytics-bar-row {
+  display: grid;
+  grid-template-columns: 62px 1fr 140px;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.analytics-bar-day {
+  color: #cbd5e1;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.analytics-bar-track {
+  width: 100%;
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(51, 65, 85, 0.65);
+  overflow: hidden;
+}
+
+.analytics-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3b82f6, #10b981);
+}
+
+.analytics-bar-fill-matches {
+  background: linear-gradient(90deg, #8b5cf6, #3b82f6);
+}
+
+.analytics-bar-values {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  color: #94a3b8;
+  font-size: 0.78rem;
+}
+
+.analytics-top-players {
+  margin-top: 1.1rem;
+}
+
+.analytics-trend-chart {
+  width: 100%;
+  height: 210px;
+  display: block;
+  border-radius: 0.7rem;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.analytics-trend-axis {
+  stroke: rgba(148, 163, 184, 0.35);
+  stroke-width: 1;
+}
+
+.analytics-trend-line {
+  fill: none;
+  stroke: #60a5fa;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.analytics-trend-dot {
+  fill: #0f172a;
+  stroke: #93c5fd;
+  stroke-width: 2;
+}
+
+.analytics-trend-value {
+  fill: #cbd5e1;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.analytics-trend-day {
+  fill: #94a3b8;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.analytics-top-players h3 {
+  margin: 0 0 0.7rem;
+}
+
+.analytics-top-players-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.analytics-top-player-row {
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 0.8rem;
+  background: rgba(13, 23, 42, 0.82);
+  padding: 0.7rem 0.85rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.analytics-top-player-row p {
+  margin: 0.2rem 0 0;
+  color: #94a3b8;
+  font-size: 0.82rem;
+}
+
+.analytics-top-player-rating {
+  text-align: right;
+}
+
+.analytics-top-player-rating span {
+  display: block;
+  color: #94a3b8;
+  font-size: 0.72rem;
+}
+
+.analytics-top-player-rating strong {
+  font-size: 1.1rem;
+}
+
 .analytics-modal-overlay {
   position: fixed;
   inset: 0;
@@ -425,6 +632,35 @@
   }
 
   .analytics-lineups-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .analytics-report-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .analytics-report-filters {
+    width: 100%;
+  }
+
+  .analytics-report-filters label {
+    flex: 1;
+  }
+
+  .analytics-report-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .analytics-report-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .analytics-bar-row {
+    grid-template-columns: 1fr;
+  }
+
+  .analytics-top-players-list {
     grid-template-columns: 1fr;
   }
 }

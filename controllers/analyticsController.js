@@ -460,6 +460,105 @@ exports.getAnalystMatches = async (req, res) => {
     }
 };
 
+exports.getAnalyticsReport = async (req, res) => {
+    const startDate = String(req.query.startDate || '').trim();
+    const endDate = String(req.query.endDate || '').trim();
+
+    if (!startDate || !endDate) {
+        return res.status(400).json({ error: 'Потрібно передати startDate і endDate' });
+    }
+
+    const from = new Date(startDate);
+    const to = new Date(endDate);
+    if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) {
+        return res.status(400).json({ error: 'Некоректний формат дати' });
+    }
+    if (from > to) {
+        return res.status(400).json({ error: 'startDate не може бути пізніше endDate' });
+    }
+
+    const toInclusive = new Date(to.getTime());
+    toInclusive.setHours(23, 59, 59, 999);
+
+    try {
+        const dailyResult = await db.query(
+            `SELECT
+                DATE(m.date) AS day,
+                COUNT(*)::INT AS matches_count,
+                COALESCE(SUM(home_goals + away_goals), 0)::INT AS goals_count,
+                COALESCE(AVG(home_goals + away_goals), 0)::NUMERIC(10,2) AS avg_goals_per_match
+             FROM (
+                 SELECT
+                    m.id,
+                    m.date,
+                    COALESCE(SPLIT_PART(COALESCE(m.score, '0:0'), ':', 1)::INT, 0) AS home_goals,
+                    COALESCE(SPLIT_PART(COALESCE(m.score, '0:0'), ':', 2)::INT, 0) AS away_goals
+                 FROM matches m
+                 WHERE m.date >= $1
+                   AND m.date <= $2
+             ) m
+             GROUP BY DATE(m.date)
+             ORDER BY DATE(m.date) ASC`,
+            [from.toISOString(), toInclusive.toISOString()]
+        );
+
+        const summaryResult = await db.query(
+            `SELECT
+                COUNT(*)::INT AS total_matches,
+                COALESCE(SUM(home_goals + away_goals), 0)::INT AS total_goals,
+                COALESCE(AVG(home_goals + away_goals), 0)::NUMERIC(10,2) AS avg_goals_per_match
+             FROM (
+                 SELECT
+                    COALESCE(SPLIT_PART(COALESCE(m.score, '0:0'), ':', 1)::INT, 0) AS home_goals,
+                    COALESCE(SPLIT_PART(COALESCE(m.score, '0:0'), ':', 2)::INT, 0) AS away_goals
+                 FROM matches m
+                 WHERE m.date >= $1
+                   AND m.date <= $2
+             ) x`,
+            [from.toISOString(), toInclusive.toISOString()]
+        );
+
+        const topPlayersResult = await db.query(
+            `SELECT
+                apr.footballerid,
+                CONCAT(COALESCE(f.firstname, ''), ' ', COALESCE(f.lastname, '')) AS player_name,
+                fc.name AS club_name,
+                ROUND(AVG(apr.rating)::NUMERIC, 2) AS avg_rating,
+                COUNT(*)::INT AS ratings_count
+             FROM analyst_player_ratings apr
+             JOIN matches m ON m.id = apr.matchid
+             JOIN footballers f ON f.id = apr.footballerid
+             JOIN footballclubs fc ON fc.id = f.footballclubid
+             WHERE m.date >= $1
+               AND m.date <= $2
+             GROUP BY apr.footballerid, f.firstname, f.lastname, fc.name
+             ORDER BY avg_rating DESC, ratings_count DESC, apr.footballerid ASC
+             LIMIT 8`,
+            [from.toISOString(), toInclusive.toISOString()]
+        );
+
+        return res.status(200).json({
+            range: {
+                startDate,
+                endDate
+            },
+            summary: summaryResult.rows[0] || {
+                total_matches: 0,
+                total_goals: 0,
+                avg_goals_per_match: 0
+            },
+            daily: dailyResult.rows || [],
+            topPlayers: topPlayersResult.rows || []
+        });
+    } catch (err) {
+        console.error('❌ Помилка формування аналітичного звіту:', err);
+        return res.status(500).json({
+            error: 'Помилка формування аналітичного звіту',
+            details: err.message
+        });
+    }
+};
+
 exports.getMatchLineups = async (req, res) => {
     const { matchId } = req.params;
 

@@ -19,6 +19,7 @@ router.get('/analytics/matches/:matchId/lineups', analyticsController.getMatchLi
 router.post('/analytics/matches/:matchId/ratings', analyticsController.savePlayerRatings);
 router.post('/analytics/matches/:matchId/statistics', analyticsController.savePlayerStatistics);
 router.get('/analytics/matches/:matchId/events', analyticsController.getMatchEvents);
+router.get('/analytics/reports/summary', analyticsController.getAnalyticsReport);
 router.post('/analytics/matches/:matchId/events/generate', analyticsController.generateMatchEvent);
 router.post('/analytics/matches/:matchId/events/:eventId/confirm-goal', analyticsController.confirmGoalEvent);
 router.post('/analytics/matches/:matchId/events/:eventId/reject', analyticsController.rejectEvent);
