@@ -54,17 +54,27 @@ const FootballersPanel = () => {
     const fetchClubs = async () => {
         try {
             console.log('🏢 Отримання списку клубів');
-            // Генеруємо список клубів
-            const mockClubs = [
-                { id: 1, name: 'Динамо Київ' },
-                { id: 2, name: 'Шахтар Донецьк' },
-                { id: 3, name: 'Металіст Харків' },
-                { id: 4, name: 'Зоря Луганськ' },
-                { id: 5, name: 'Ворскла Полтава' },
-                { id: 6, name: 'Колос Ковалівка' }
-            ];
-            setClubs(mockClubs);
-            console.log('✅ Клубів завантажено:', mockClubs.length);
+            const response = await fetch('/api/users/clubs', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('📦 Отримані дані з сервера:', data);
+                // Трансформуємо формат: { Id, Name, City } -> { id, name }
+                const clubsList = data.clubs.map(club => ({
+                    id: club.Id || club.id,
+                    name: club.Name || club.name
+                }));
+                console.log('📋 Трансформовані клуби:', clubsList);
+                setClubs(clubsList);
+                console.log('✅ Клубів завантажено:', clubsList.length);
+            } else {
+                console.error('❌ Помилка завантаження клубів, статус:', response.status);
+                const errorData = await response.json();
+                console.error('❌ Помилка:', errorData);
+            }
         } catch (error) {
             console.error('❌ Помилка при отриманні клубів:', error);
         }
@@ -362,8 +372,8 @@ const FootballersPanel = () => {
                             <div className="form-group">
                                 <label>Club</label>
                                 <select name="footballclubid" value={formData.footballclubid} onChange={handleInputChange}>
-                                    {clubs.map((club) => (
-                                        <option key={club.id} value={club.id}>
+                                    {clubs.map((club, index) => (
+                                        <option key={`club-add-${club.id}-${index}`} value={club.id}>
                                             {club.name}
                                         </option>
                                     ))}
@@ -430,8 +440,8 @@ const FootballersPanel = () => {
                             <div className="form-group">
                                 <label>Club</label>
                                 <select name="footballclubid" value={formData.footballclubid} onChange={handleInputChange}>
-                                    {clubs.map((club) => (
-                                        <option key={club.id} value={club.id}>
+                                    {clubs.map((club, index) => (
+                                        <option key={`club-edit-${club.id}-${index}`} value={club.id}>
                                             {club.name}
                                         </option>
                                     ))}
