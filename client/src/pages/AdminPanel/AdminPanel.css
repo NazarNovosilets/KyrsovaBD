@@ -281,6 +281,14 @@
     box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
 }
 
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
 /* Users Table */
 .users-table-container {
     background: rgba(30, 41, 59, 0.7);

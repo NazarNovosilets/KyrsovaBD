@@ -12,6 +12,8 @@ function formatDate(dateString) {
 function mapMatchData(match) {
     const lifecycle = getMatchLifecycle(match.matchdate, match.status);
     const kickoff = new Date(match.matchdate);
+    const playerOfMatchName = String(match.playerofmatch || '').trim();
+    const rawStatus = String(match.status || '').toLowerCase();
 
     return {
         id: match.id,
@@ -27,43 +29,130 @@ function mapMatchData(match) {
         gameweek: match.gameweek,
         gameweekLabel: `GW ${match.gameweek}`,
         status: lifecycle.group,
+        rawStatus,
         phase: lifecycle.phase,
         isLive: lifecycle.isLive,
-        kickoffIso: kickoff.toISOString()
+        kickoffIso: kickoff.toISOString(),
+        playerOfMatch: playerOfMatchName || null
     };
 }
 
 async function loadMatchesBase(whereClause = '', params = []) {
-    const result = await db.query(
-        `SELECT
-             m.id,
-             m.homeclubid,
-             hc.name AS hometeam,
-             m.awayclubid,
-             ac.name AS awayteam,
-             m.date AS matchdate,
-             m.score,
-             m.matchday AS gameweek,
-             m.status
-         FROM matches m
-         JOIN footballclubs hc ON m.homeclubid = hc.id
-         JOIN footballclubs ac ON m.awayclubid = ac.id
-         ${whereClause}
-         ORDER BY m.date ASC, m.id ASC`,
-        params
-    );
+    try {
+        const result = await db.query(
+            `SELECT
+                 m.id,
+                 m.homeclubid,
+                 hc.name AS hometeam,
+                 m.awayclubid,
+                 ac.name AS awayteam,
+                 m.date AS matchdate,
+                 m.score,
+                 m.matchday AS gameweek,
+                 m.status,
+                 pom.playerofmatch
+             FROM matches m
+             JOIN footballclubs hc ON m.homeclubid = hc.id
+             JOIN footballclubs ac ON m.awayclubid = ac.id
+             LEFT JOIN LATERAL (
+                 SELECT
+                    CONCAT(COALESCE(f.firstname, ''), ' ', COALESCE(f.lastname, '')) AS playerofmatch
+                 FROM statistics s
+                 JOIN footballers f ON f.id = s.footballerid
+                 WHERE s.matchid = m.id
+                 ORDER BY
+                    (
+                        COALESCE(s.goals, 0) * 5
+                        + COALESCE(s.assists, 0) * 3
+                        + LEAST(COALESCE(s.minutesplayed, 0), 120) / 30.0
+                        - COALESCE(s.yellowcards, 0) * 1.5
+                        + CASE
+                            WHEN COALESCE(s.cleansheet, FALSE) AND UPPER(COALESCE(f.position, '')) IN ('GK', 'DEF') THEN 4
+                            ELSE 0
+                          END
+                    ) DESC,
+                    COALESCE(s.goals, 0) DESC,
+                    COALESCE(s.assists, 0) DESC,
+                    COALESCE(s.minutesplayed, 0) DESC,
+                    s.footballerid ASC
+                 LIMIT 1
+             ) pom ON TRUE
+             ${whereClause}
+             ORDER BY m.date ASC, m.id ASC`,
+            params
+        );
 
-    return result.rows.map(mapMatchData);
+        return result.rows.map(mapMatchData);
+    } catch (err) {
+        // Backward compatibility for older DB schema without
+        // matches.status / matches.playerofthematchid columns.
+        if (err.code !== '42703') {
+            throw err;
+        }
+
+        const fallbackResult = await db.query(
+            `SELECT
+                 m.id,
+                 m.homeclubid,
+                 hc.name AS hometeam,
+                 m.awayclubid,
+                 ac.name AS awayteam,
+                 m.date AS matchdate,
+                 m.score,
+                 m.matchday AS gameweek,
+                 NULL::VARCHAR AS status,
+                 pom.playerofmatch
+             FROM matches m
+             JOIN footballclubs hc ON m.homeclubid = hc.id
+             JOIN footballclubs ac ON m.awayclubid = ac.id
+             LEFT JOIN LATERAL (
+                 SELECT
+                    CONCAT(COALESCE(f.firstname, ''), ' ', COALESCE(f.lastname, '')) AS playerofmatch
+                 FROM statistics s
+                 JOIN footballers f ON f.id = s.footballerid
+                 WHERE s.matchid = m.id
+                 ORDER BY
+                    (
+                        COALESCE(s.goals, 0) * 5
+                        + COALESCE(s.assists, 0) * 3
+                        + LEAST(COALESCE(s.minutesplayed, 0), 120) / 30.0
+                        + CASE
+                            WHEN COALESCE(s.cleansheet, FALSE) AND UPPER(COALESCE(f.position, '')) IN ('GK', 'DEF') THEN 4
+                            ELSE 0
+                          END
+                    ) DESC,
+                    COALESCE(s.goals, 0) DESC,
+                    COALESCE(s.assists, 0) DESC,
+                    COALESCE(s.minutesplayed, 0) DESC,
+                    s.footballerid ASC
+                 LIMIT 1
+             ) pom ON TRUE
+             ${whereClause}
+             ORDER BY m.date ASC, m.id ASC`,
+            params
+        );
+
+        return fallbackResult.rows.map(mapMatchData);
+    }
 }
 
 exports.getFixtures = async (req, res) => {
     try {
-        const matches = await loadMatchesBase(
-            `WHERE COALESCE(m.status, '') NOT IN ('cancelled')`
-        );
+        const matches = await loadMatchesBase();
 
         const fixtureMatches = matches
-            .filter((match) => match.status === 'upcoming' || match.status === 'live')
+            .filter((match) => {
+                const byDbStatus = match.rawStatus === 'upcoming' || match.rawStatus === 'live';
+                const byLifecycle = match.status === 'upcoming' || match.status === 'live';
+                return byDbStatus || byLifecycle;
+            })
+            .sort((a, b) => {
+                const aLive = a.rawStatus === 'live' || a.status === 'live';
+                const bLive = b.rawStatus === 'live' || b.status === 'live';
+                if (aLive && !bLive) return -1;
+                if (!aLive && bLive) return 1;
+                return new Date(a.kickoffIso) - new Date(b.kickoffIso);
+            })
             .slice(0, 20);
 
         res.status(200).json({
@@ -239,6 +328,83 @@ exports.getResults = async (req, res) => {
         console.error('❌ Помилка при отриманні результатів:', err);
         res.status(500).json({
             error: 'Помилка при отриманні результатів',
+            details: err.message
+        });
+    }
+};
+
+exports.createMatchByAdmin = async (req, res) => {
+    const {
+        homeClubId,
+        awayClubId,
+        kickoffAt,
+        status = 'upcoming',
+        matchday = 1,
+        score = '0:0'
+    } = req.body || {};
+
+    const normalizedStatus = String(status || '').toLowerCase();
+    const allowedStatuses = ['upcoming', 'live', 'finished', 'postponed', 'cancelled'];
+
+    if (!homeClubId || !awayClubId || !kickoffAt) {
+        return res.status(400).json({
+            error: 'homeClubId, awayClubId та kickoffAt є обов\'язковими'
+        });
+    }
+
+    if (Number(homeClubId) === Number(awayClubId)) {
+        return res.status(400).json({
+            error: 'Домашня і гостьова команда не можуть бути однаковими'
+        });
+    }
+
+    if (!allowedStatuses.includes(normalizedStatus)) {
+        return res.status(400).json({
+            error: `Неприпустимий статус. Дозволені: ${allowedStatuses.join(', ')}`
+        });
+    }
+
+    const kickoffDate = new Date(kickoffAt);
+    if (Number.isNaN(kickoffDate.getTime())) {
+        return res.status(400).json({
+            error: 'Некоректна дата/час kickoffAt'
+        });
+    }
+
+    try {
+        const clubsResult = await db.query(
+            `SELECT id, name FROM footballclubs WHERE id = ANY($1::int[])`,
+            [[Number(homeClubId), Number(awayClubId)]]
+        );
+
+        if (clubsResult.rows.length !== 2) {
+            return res.status(404).json({
+                error: 'Один або обидва клуби не знайдено'
+            });
+        }
+
+        const insertResult = await db.query(
+            `INSERT INTO matches (homeclubid, awayclubid, date, score, matchday, status)
+             VALUES ($1, $2, $3, $4, $5, $6)
+             RETURNING id, homeclubid, awayclubid, date, score, matchday, status`,
+            [
+                Number(homeClubId),
+                Number(awayClubId),
+                kickoffDate.toISOString(),
+                String(score || '0:0'),
+                Number(matchday) || 1,
+                normalizedStatus
+            ]
+        );
+
+        res.status(201).json({
+            message: 'Матч успішно створено',
+            match: insertResult.rows[0]
+        });
+    } catch (err) {
+        console.error('❌ Помилка створення матчу адміном:', err);
+        res.status(500).json({
+            error: 'Помилка при створенні матчу',
             details: err.message
         });
     }

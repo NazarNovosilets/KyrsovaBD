@@ -256,6 +256,11 @@ function Matches() {
                             <span className="match-gameweek">{match.gameweekLabel || `GW ${match.gameweek}`}</span>
                             {lifecycle.showTimer && <span className="match-phase-copy">{lifecycle.statusLabel} in progress</span>}
                           </div>
+                          {activeTab === 'results' && match.playerOfMatch && (
+                            <div className="match-footer" style={{ paddingTop: 0 }}>
+                              <span className="match-phase-copy">⭐ Player of the Match: {match.playerOfMatch}</span>
+                            </div>
+                          )}
                         </div>
                     );
                   })}

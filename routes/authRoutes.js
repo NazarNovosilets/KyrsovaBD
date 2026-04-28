@@ -17,6 +17,11 @@ router.get('/top-managers', leaderboardController.getTopManagers);
 router.get('/analytics/matches', analyticsController.getAnalystMatches);
 router.get('/analytics/matches/:matchId/lineups', analyticsController.getMatchLineups);
 router.post('/analytics/matches/:matchId/ratings', analyticsController.savePlayerRatings);
+router.post('/analytics/matches/:matchId/statistics', analyticsController.savePlayerStatistics);
+router.get('/analytics/matches/:matchId/events', analyticsController.getMatchEvents);
+router.post('/analytics/matches/:matchId/events/generate', analyticsController.generateMatchEvent);
+router.post('/analytics/matches/:matchId/events/:eventId/confirm-goal', analyticsController.confirmGoalEvent);
+router.post('/analytics/matches/:matchId/events/:eventId/reject', analyticsController.rejectEvent);
 
 // 👥 Team routes
 router.get('/players', teamController.getAllPlayers);
@@ -31,6 +36,7 @@ router.get('/matches/fixtures', matchController.getFixtures);
 router.get('/matches/gameweek/:gameweek', matchController.getMatchesByGameweek);
 router.get('/matches/standings', matchController.getStandings);
 router.get('/matches/results', matchController.getResults);
+router.post('/matches/admin-create', matchController.createMatchByAdmin);
 router.get('/matches/:matchId', matchController.getMatchById);
 
 const clubController = require('../controllers/clubController');

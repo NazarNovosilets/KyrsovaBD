@@ -7,6 +7,7 @@ const WebSocket = require('ws');
 const db = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const { startLiveEventEngine } = require('./services/liveEventEngine');
 
 const app = express();
 const server = http.createServer(app);
@@ -51,16 +52,24 @@ wss.on('connection', (ws) => {
     });
 });
 
-// 3. Статичні файли (картинки, стилі) - ПІСЛЯ API маршрутів!
-app.use(express.static(path.join(__dirname, 'client/build')));
+const isProduction = process.env.NODE_ENV === 'production';
 
-// 4. Catch-all для React маршрутів (regex для Express 5.x)
-app.get(/^(?!\/api).*/, (req, res) => {
-    res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-});
+// 3. Статичні файли та SPA fallback тільки для production.
+if (isProduction) {
+    app.use(express.static(path.join(__dirname, 'client/build')));
 
-const PORT = process.env.PORT || 3000;
+    // Catch-all для React маршрутів (regex для Express 5.x)
+    app.get(/^(?!\/api).*/, (req, res) => {
+        res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+    });
+}
+
+const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
     console.log(`🚀 Server запущено на порту ${PORT}`);
     console.log(`📡 WebSocket готовий на ws://localhost:${PORT}`);
+    if (!isProduction) {
+        console.log('🛠️ Dev mode: frontend запускай окремо через client/start');
+    }
+    startLiveEventEngine();
 });
