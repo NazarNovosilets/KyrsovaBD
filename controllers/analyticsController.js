@@ -2,7 +2,7 @@ const db = require('../config/db');
 const { getMatchLifecycle } = require('../utils/matchLifecycle');
 
 const MIN_PLAYER_RATING = 1;
-const MAX_PLAYER_RATING = 10;
+const MAX_PLAYER_RATING = 100;
 const RANDOM_FORMATIONS = [
     { label: '4-3-3', DEF: 4, MID: 3, FWD: 3 },
     { label: '4-4-2', DEF: 4, MID: 4, FWD: 2 },
@@ -35,6 +35,43 @@ async function ensureAnalystLineupsTable() {
             updatedat TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (matchid, teamclubid)
         )`
+    );
+}
+
+async function recalculateFantasyTeamsPointsForPlayers(client, playerIds = []) {
+    const normalizedIds = Array.from(
+        new Set(
+            (playerIds || [])
+                .map((id) => Number(id))
+                .filter((id) => Number.isInteger(id) && id > 0)
+        )
+    );
+
+    if (normalizedIds.length === 0) return;
+
+    await client.query(
+        `UPDATE fantasyteams ft
+         SET totalseasonpoints = COALESCE(calc.total_points, 0)
+         FROM (
+            SELECT
+                impacted.id AS fantasyteamid,
+                COALESCE(SUM(COALESCE(player_points.points, 0)), 0)::INTEGER AS total_points
+            FROM fantasyteams impacted
+            LEFT JOIN fantasyteam_footballer ftf ON ftf.fantasyteamid = impacted.id
+            LEFT JOIN (
+                SELECT apr.footballerid, ROUND(AVG(apr.rating))::INTEGER AS points
+                FROM analyst_player_ratings apr
+                GROUP BY apr.footballerid
+            ) player_points ON player_points.footballerid = ftf.footballerid
+            WHERE impacted.id IN (
+                SELECT DISTINCT ftf2.fantasyteamid
+                FROM fantasyteam_footballer ftf2
+                WHERE ftf2.footballerid = ANY($1::INT[])
+            )
+            GROUP BY impacted.id
+         ) calc
+         WHERE ft.id = calc.fantasyteamid`,
+        [normalizedIds]
     );
 }
 
@@ -425,6 +462,11 @@ exports.savePlayerRatings = async (req, res) => {
                 [matchId, playerId, rating]
             );
         }
+
+        await recalculateFantasyTeamsPointsForPlayers(
+            client,
+            ratings.map((item) => Number(item.playerId))
+        );
 
         await client.query('COMMIT');
 

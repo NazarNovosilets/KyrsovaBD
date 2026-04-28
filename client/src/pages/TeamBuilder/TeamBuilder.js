@@ -36,6 +36,22 @@ export default function TeamBuilder() {
 
   const validPositions = ['GK', 'DEF', 'MID', 'FWD'];
 
+  const normalizePosition = (position = '') => {
+    const value = String(position).trim().toUpperCase();
+
+    if (['GK', 'GOALKEEPER', 'ВРТ', 'ВОРОТАР'].includes(value)) return 'GK';
+    if (['DEF', 'CB', 'LB', 'RB', 'LWB', 'RWB', 'ЗАХ', 'ЗАХИСНИК'].includes(value)) return 'DEF';
+    if (['MID', 'CM', 'CDM', 'CAM', 'RM', 'LM', 'ПЗ', 'ПІВЗАХИСНИК'].includes(value)) return 'MID';
+    if (['FWD', 'FW', 'ST', 'CF', 'STR', 'НАП', 'НАПАДНИК'].includes(value)) return 'FWD';
+
+    if (value.includes('GK') || value.includes('GOAL')) return 'GK';
+    if (value.includes('DEF') || value.includes('BACK')) return 'DEF';
+    if (value.includes('MID')) return 'MID';
+    if (value.includes('FWD') || value.includes('STR') || value.includes('FORWARD')) return 'FWD';
+
+    return value;
+  };
+
   const normalizeSelectedPlayers = (rawPlayers) => {
     if (!Array.isArray(rawPlayers)) return [];
 
@@ -106,7 +122,20 @@ export default function TeamBuilder() {
       const res = await fetch('/api/auth/players');
       if (res.ok) {
         const data = await res.json();
-        setPlayers(data.players || []);
+        const normalized = (data.players || [])
+            .map((p) => {
+              const position = normalizePosition(p?.position);
+              const price = Number(p?.price);
+              const points = Number(p?.points);
+              return {
+                ...p,
+                position,
+                price: Number.isFinite(price) ? price : 0,
+                points: Number.isFinite(points) ? points : 0
+              };
+            })
+            .filter((p) => p && p.id !== undefined && p.id !== null && validPositions.includes(p.position));
+        setPlayers(normalized);
       } else {
         setPlayers(generateMock());
       }

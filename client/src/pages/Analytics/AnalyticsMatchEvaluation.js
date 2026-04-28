@@ -43,20 +43,6 @@ function TeamHalf({ teamName, lineup, ratingsByPlayer, onRate, side = 'left', ac
     [starters]
   );
 
-  const positionOrder = side === 'left'
-    ? [
-      { key: 'GK', title: 'GK' },
-      { key: 'DEF', title: 'DEF' },
-      { key: 'MID', title: 'MID' },
-      { key: 'FWD', title: 'FWD' }
-    ]
-    : [
-      { key: 'FWD', title: 'FWD' },
-      { key: 'MID', title: 'MID' },
-      { key: 'DEF', title: 'DEF' },
-      { key: 'GK', title: 'GK' }
-    ];
-
   const renderPlayerCard = (player) => (
     <article key={player.id} className="evaluation-player">
       <div className="evaluation-player__name">{player.name}</div>
@@ -65,7 +51,7 @@ function TeamHalf({ teamName, lineup, ratingsByPlayer, onRate, side = 'left', ac
         className="evaluation-player__input"
         type="number"
         min="1"
-        max="10"
+        max="100"
         value={ratingsByPlayer[player.id] ?? ''}
         onChange={(event) => onRate(player.id, event.target.value)}
         placeholder="-"
@@ -73,14 +59,21 @@ function TeamHalf({ teamName, lineup, ratingsByPlayer, onRate, side = 'left', ac
     </article>
   );
 
-  const renderColumn = ({ key, title }) => (
-    <div className="evaluation-column" key={key}>
-      <span className="evaluation-column__title">{title}</span>
-      <div className="evaluation-column__players">
-        {(formation[key] || []).map(renderPlayerCard)}
+  const renderFormationView = () => {
+    const rowOrder = side === 'left'
+      ? ['GK', 'DEF', 'MID', 'FWD']
+      : ['FWD', 'MID', 'DEF', 'GK'];
+
+    return (
+      <div className="evaluation-half__grid">
+        {rowOrder.map((positionKey) => (
+          <div key={positionKey} className={`evaluation-formation-row ${positionKey.toLowerCase()}`}>
+            {(formation[positionKey] || []).map(renderPlayerCard)}
+          </div>
+        ))}
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <section className={`evaluation-half evaluation-half--${side}`}>
@@ -108,9 +101,7 @@ function TeamHalf({ teamName, lineup, ratingsByPlayer, onRate, side = 'left', ac
       </div>
 
       {activeTab === 'starters' ? (
-        <div className="evaluation-half__grid">
-          {positionOrder.map(renderColumn)}
-        </div>
+        renderFormationView()
       ) : (
         <div className="evaluation-bench">
           {benchPlayers.length > 0 ? (
@@ -227,7 +218,7 @@ export default function AnalyticsMatchEvaluation() {
 
     const numeric = Number(value);
     if (Number.isNaN(numeric)) return;
-    const normalized = Math.max(1, Math.min(10, numeric));
+    const normalized = Math.max(1, Math.min(100, numeric));
 
     setRatingsByPlayer((prev) => ({
       ...prev,
