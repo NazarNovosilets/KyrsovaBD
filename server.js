@@ -6,6 +6,7 @@ const http = require('http');
 const WebSocket = require('ws');
 const db = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 const server = http.createServer(app);
@@ -16,6 +17,7 @@ app.use(express.json());
 
 // 1. API маршрути (МАЮТЬ ЙТИ ПЕРШИМИ!)
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 app.get('/api', (req, res) => {
     res.json({ message: 'API працює 🚀' });

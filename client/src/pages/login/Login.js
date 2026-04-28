@@ -31,25 +31,33 @@ const Login = () => {
             const data = await response.json();
             console.log('📦 Response data:', data);
 
-            if (response.ok) {
-                console.log('✅ Логін успішний!');
-                setMessage('✅ Вхід успішний! Перенаправлення...');
+             if (response.ok) {
+                 console.log('✅ Логін успішний!');
+                 setMessage('✅ Вхід успішний! Перенаправлення...');
 
-                // 💾 Зберігаємо userId в localStorage
-                localStorage.setItem('userId', String(data.userId));
-                localStorage.setItem('email', data.email);
-                localStorage.setItem('fullName', data.fullName);
+                 // 💾 Зберігаємо userId в localStorage
+                 localStorage.setItem('userId', String(data.userId));
+                 localStorage.setItem('email', data.email);
+                 localStorage.setItem('fullName', data.fullName);
+                 localStorage.setItem('role', data.role);
 
-                console.log('💾 Дані збережені в localStorage');
-                console.log('userId:', localStorage.getItem('userId'));
+                 console.log('💾 Дані збережені в localStorage');
+                 console.log('userId:', localStorage.getItem('userId'));
+                 console.log('role:', localStorage.getItem('role'));
 
-                setFormData({ email: '', password: '' });
+                 setFormData({ email: '', password: '' });
 
-                // Перенаправлюємо на дашборд
-                setTimeout(() => {
-                    console.log('🚀 Перенаправляємо на /dashboard');
-                    navigate('/dashboard', { replace: true });
-                }, 1000);
+                 // Перенаправлюємо в залежності від ролі
+                 setTimeout(() => {
+                     const role = data.role;
+                     if (role === 'admin') {
+                         console.log('🚀 Перенаправляємо на /admin');
+                         navigate('/admin', { replace: true });
+                     } else {
+                         console.log('🚀 Перенаправляємо на /dashboard');
+                         navigate('/dashboard', { replace: true });
+                     }
+                 }, 1000);
             } else {
                 console.log('❌ Помилка логіну:', data.error);
                 setMessage(`❌ Помилка: ${data.error}`);

@@ -5,6 +5,7 @@ import Login from './pages/login/Login';
 import Dashboard from './pages/Dashboard/Dashboard';
 import TeamBuilder from './pages/TeamBuilder/TeamBuilder';
 import Matches from './pages/Matches/Matches';
+import AdminPanel from './pages/AdminPanel/AdminPanel';
 
 // ProtectedRoute компонент - перевіряє autentyfication
 const ProtectedRoute = ({ children }) => {
@@ -23,6 +24,27 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+// AdminRoute компонент - перевіряє autentyfication і роль адміністратора
+const AdminRoute = ({ children }) => {
+  const userId = localStorage.getItem('userId');
+  const role = localStorage.getItem('role');
+
+  console.log('🔐 AdminRoute check - userId:', userId, 'role:', role);
+
+  if (!userId) {
+    console.log('❌ No userId found, redirecting to login');
+    return <Navigate to="/login" replace />;
+  }
+
+  if (role !== 'admin') {
+    console.log('❌ User is not admin, redirecting to dashboard');
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  console.log('✅ Admin access granted');
+  return children;
+};
+
 function App() {
   return (
       <Router>
@@ -37,6 +59,16 @@ function App() {
                <ProtectedRoute>
                  <Dashboard />
                </ProtectedRoute>
+             }
+           />
+
+           {/* Admin Panel - тільки для адміністраторів */}
+           <Route
+             path="/admin"
+             element={
+               <AdminRoute>
+                 <AdminPanel />
+               </AdminRoute>
              }
            />
 

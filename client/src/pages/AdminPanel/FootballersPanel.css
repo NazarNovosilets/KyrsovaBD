@@ -1,0 +1,443 @@
+.footballers-panel {
+    background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 100%);
+    min-height: 100vh;
+    padding: 2rem;
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.footballers-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+}
+
+.footballers-header .header-left h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: #fff;
+}
+
+.footballers-header .header-left p {
+    font-size: 1rem;
+    color: #a0aec0;
+    margin: 0.5rem 0 0 0;
+}
+
+.btn-add-footballer {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-add-footballer:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+}
+
+/* Stats Grid */
+.footballers-panel .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.footballers-panel .stat-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.footballers-panel .stat-card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(30, 41, 59, 0.9);
+    transform: translateY(-2px);
+}
+
+.footballers-panel .stat-card h3 {
+    font-size: 0.875rem;
+    color: #cbd5e1;
+    margin: 0 0 0.5rem 0;
+    font-weight: 500;
+}
+
+.footballers-panel .stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Search Container */
+.footballers-panel .search-container {
+    margin-bottom: 2rem;
+}
+
+.footballers-panel .search-box {
+    position: relative;
+}
+
+.footballers-panel .search-input {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(30, 41, 59, 0.7);
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.footballers-panel .search-input::placeholder {
+    color: #94a3b8;
+}
+
+.footballers-panel .search-input:focus {
+    outline: none;
+    border-color: rgba(59, 130, 246, 0.5);
+    background: rgba(30, 41, 59, 0.9);
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+/* Footballers Table */
+.footballers-table-container {
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+}
+
+.footballers-table-container h2 {
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 700;
+}
+
+.table-subtitle {
+    color: #a0aec0;
+    margin: 0 0 1.5rem 0;
+    font-size: 0.95rem;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.footballers-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.footballers-table thead tr {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.footballers-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #cbd5e1;
+    font-size: 0.875rem;
+}
+
+.footballers-table tbody tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.footballers-table tbody tr:hover {
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.footballers-table td {
+    padding: 1rem;
+    font-size: 0.95rem;
+}
+
+/* Player Cell */
+.player-cell {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.player-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.player-name {
+    font-weight: 600;
+    color: #fff;
+    font-size: 0.95rem;
+}
+
+/* Position Cell */
+.position-cell {
+    text-align: center;
+}
+
+.position-badge {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+/* Club Cell */
+.club-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.club-icon {
+    font-size: 0.9rem;
+}
+
+/* Price Cell */
+.price-cell {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+/* Points Cell */
+.points-cell {
+    text-align: center;
+}
+
+.points-badge {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 0.35rem;
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+/* Actions Cell */
+.actions-cell {
+    text-align: right;
+}
+
+.footballers-panel .btn-action {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+    margin-left: 0.5rem;
+}
+
+.footballers-panel .btn-edit:hover,
+.footballers-panel .btn-delete:hover {
+    transform: scale(1.2);
+}
+
+/* No Footballers */
+.no-footballers {
+    text-align: center;
+    color: #94a3b8;
+    padding: 2rem !important;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: rgba(30, 41, 59, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    padding: 2rem;
+    width: 90%;
+    max-width: 500px;
+    backdrop-filter: blur(10px);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-close:hover {
+    color: #fff;
+}
+
+.modal-body {
+    margin-bottom: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 0;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #cbd5e1;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(15, 23, 42, 0.5);
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: rgba(59, 130, 246, 0.5);
+    background: rgba(15, 23, 42, 0.8);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+}
+
+.form-group input::placeholder {
+    color: #94a3b8;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.btn-cancel {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.btn-submit {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .footballers-panel {
+        padding: 1rem;
+    }
+
+    .footballers-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .footballers-header .header-left h1 {
+        font-size: 1.75rem;
+    }
+
+    .footballers-panel .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .footballers-table-container {
+        padding: 1rem;
+    }
+
+    .footballers-table th,
+    .footballers-table td {
+        padding: 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    .player-cell {
+        gap: 0.5rem;
+    }
+
+    .player-avatar {
+        width: 2rem;
+        height: 2rem;
+        font-size: 1rem;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: 1.5rem;
+    }
+}
+
