@@ -11,10 +11,11 @@ function MatchRow({ match, variant, nowMs, onOpenDetails }) {
     ? `${match.homeScore} - ${match.awayScore}`
     : 'VS';
   const isClickable = variant === 'live' || variant === 'completed';
+  const densityClass = variant === 'completed' ? 'analytics-match-card--compact' : '';
 
   return (
     <article
-      className={`analytics-match-card ${isClickable ? 'is-clickable' : ''}`}
+      className={`analytics-match-card ${densityClass} ${isClickable ? 'is-clickable' : ''}`}
       role={isClickable ? 'button' : undefined}
       tabIndex={isClickable ? 0 : undefined}
       onClick={isClickable ? () => onOpenDetails(match) : undefined}
@@ -121,6 +122,10 @@ export default function AnalyticsMatches() {
     completedMatches: [],
     upcomingMatches: []
   });
+  const [visibleCounts, setVisibleCounts] = useState({
+    completed: 10,
+    upcoming: 10
+  });
   const [reportRange, setReportRange] = useState(() => {
     const end = new Date();
     const start = new Date();
@@ -148,6 +153,7 @@ export default function AnalyticsMatches() {
 
         const payload = await response.json();
         setData(payload);
+      setVisibleCounts({ completed: 10, upcoming: 10 });
         setError(null);
       } catch (err) {
         console.error('Analytics matches load error:', err);
@@ -405,7 +411,7 @@ export default function AnalyticsMatches() {
               </div>
                 <div className="analytics-list">
                   {data.completedMatches.length > 0 ? (
-                    data.completedMatches.map((match) => (
+                    data.completedMatches.slice(0, visibleCounts.completed).map((match) => (
                       <MatchRow
                         key={`completed-${match.id}`}
                         match={match}
@@ -418,6 +424,18 @@ export default function AnalyticsMatches() {
                     <div className="analytics-empty-state">Немає завершених матчів.</div>
                 )}
               </div>
+
+              {data.completedMatches.length > visibleCounts.completed && (
+                <div className="analytics-load-more">
+                  <button
+                    className="analytics-load-more__btn"
+                    type="button"
+                    onClick={() => setVisibleCounts((prev) => ({ ...prev, completed: prev.completed + 10 }))}
+                  >
+                    Показати ще ({data.completedMatches.length - visibleCounts.completed})
+                  </button>
+                </div>
+              )}
             </section>
 
             <section className="analytics-section">
@@ -427,13 +445,25 @@ export default function AnalyticsMatches() {
               </div>
                 <div className="analytics-list">
                   {data.upcomingMatches.length > 0 ? (
-                    data.upcomingMatches.map((match) => (
+                    data.upcomingMatches.slice(0, visibleCounts.upcoming).map((match) => (
                       <MatchRow key={`upcoming-${match.id}`} match={match} variant="upcoming" nowMs={nowMs} />
                     ))
                   ) : (
                     <div className="analytics-empty-state">Немає запланованих матчів.</div>
                 )}
               </div>
+
+              {data.upcomingMatches.length > visibleCounts.upcoming && (
+                <div className="analytics-load-more">
+                  <button
+                    className="analytics-load-more__btn"
+                    type="button"
+                    onClick={() => setVisibleCounts((prev) => ({ ...prev, upcoming: prev.upcoming + 10 }))}
+                  >
+                    Показати ще ({data.upcomingMatches.length - visibleCounts.upcoming})
+                  </button>
+                </div>
+              )}
             </section>
           </>
         )}
