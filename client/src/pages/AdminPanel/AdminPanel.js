@@ -4,6 +4,7 @@ import FootballersPanel from './FootballersPanel';
 import './AdminPanel.css';
 import ClubsPanel from './ClubsPanel';
 import MatchesPanel from './MatchesPanel';
+import DataImportPanel from './DataImportPanel';
 
 const AdminPanel = () => {
     const navigate = useNavigate();
@@ -170,6 +171,12 @@ const AdminPanel = () => {
                     onClick={() => setActiveTab('matches')}
                 >
                     🗓️ Match Management
+                </button>
+                <button
+                    className={`tab-button ${activeTab === 'import' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('import')}
+                >
+                    📥 Data Import
                 </button>
             </div>
 
@@ -404,6 +411,9 @@ const AdminPanel = () => {
             )}
             {activeTab === 'matches' && (
                 <MatchesPanel />
+            )}
+            {activeTab === 'import' && (
+                <DataImportPanel />
             )}
         </div>
     );

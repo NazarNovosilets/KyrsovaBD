@@ -1,0 +1,82 @@
+.import-form {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.import-file-field {
+    display: grid;
+    gap: 0.45rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 0.75rem;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.55), rgba(30, 41, 59, 0.45));
+    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.import-file-field:hover {
+    border-color: rgba(59, 130, 246, 0.5);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(2, 6, 23, 0.25);
+}
+
+.import-file-label {
+    color: #e2e8f0;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.import-file-input {
+    color: #cbd5e1;
+    font-size: 0.92rem;
+}
+
+.import-file-input::file-selector-button {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #f8fafc;
+    border: 0;
+    border-radius: 0.55rem;
+    padding: 0.5rem 0.85rem;
+    margin-right: 0.75rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.import-file-input::file-selector-button:hover {
+    filter: brightness(1.08);
+}
+
+.import-message {
+    padding: 0.75rem 0.9rem;
+    border-radius: 0.6rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+
+.import-message-error {
+    color: #fecaca;
+    background: rgba(127, 29, 29, 0.45);
+    border-color: rgba(248, 113, 113, 0.4);
+}
+
+.import-message-success {
+    color: #bbf7d0;
+    background: rgba(6, 78, 59, 0.45);
+    border-color: rgba(52, 211, 153, 0.4);
+}
+
+.import-replace-toggle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    color: #cbd5e1;
+    font-size: 0.92rem;
+    padding: 0.65rem 0.8rem;
+    border: 1px dashed rgba(148, 163, 184, 0.3);
+    border-radius: 0.65rem;
+    background: rgba(15, 23, 42, 0.4);
+}
+
+.import-replace-toggle input {
+    margin-top: 0.1rem;
+}
