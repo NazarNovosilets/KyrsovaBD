@@ -1,20 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import UserHeader from '../../components/UserHeader';
 import './Matches.css';
 
 function Matches() {
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('fixtures');
   const [matches, setMatches] = useState([]);
   const [standings, setStandings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [userStats, setUserStats] = useState({
-    rank: 0,
-    totalPoints: 0,
-    teamName: 'My Team',
-    gameweek: 'GW 25'
-  });
 
   // Мапінг кольорів команд
   const teamColors = {
@@ -33,35 +26,6 @@ function Matches() {
   const getTeamColors = (teamName) => {
     return teamColors[teamName] || { primary: '#666666', secondary: '#CCCCCC' };
   };
-
-  // Завантаження статистики користувача
-  useEffect(() => {
-    const fetchUserStats = async () => {
-      try {
-        const userId = localStorage.getItem('userId');
-        if (!userId) {
-          navigate('/login');
-          return;
-        }
-
-        const response = await fetch(`/api/auth/stats/${userId}`);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.stats) {
-            setUserStats(prev => ({
-              ...prev,
-              rank: data.stats.rank || 0,
-              totalPoints: data.stats.totalPoints || 0
-            }));
-          }
-        }
-      } catch (err) {
-        console.error('Помилка при завантаженні статистики:', err);
-      }
-    };
-
-    fetchUserStats();
-  }, [navigate]);
 
   // Завантаження матчів або таблиці при зміні таба
   useEffect(() => {
@@ -111,29 +75,8 @@ function Matches() {
 
   return (
       <div className="matches-page">
-        {/* Header */}
-        <header className="dashboard-header">
-          <div className="header-left">
-            <div className="logo">⚽ UPL Fantasy</div>
-            <span className="league-name">Ukrainian Premier League</span>
-          </div>
-          <nav className="nav-menu">
-            <Link to="/dashboard" className="nav-item">Dashboard</Link>
-            <Link to="/team-builder" className="nav-item">My Team</Link>
-            <Link to="/leagues" className="nav-item">Leagues</Link>
-            <Link to="/matches" className="nav-item active">Matches</Link>
-            <Link to="/statistics" className="nav-item">Statistics</Link>
-          </nav>
-          <div className="header-right">
-            <button className="user-btn">👤 User</button>
-            <div className="manager-info">
-              <span className="rank-label">Manager</span>
-              <span className="rank">Rank #{userStats.rank} • {userStats.totalPoints.toLocaleString()} pts</span>
-            </div>
-          </div>
-        </header>
+        <UserHeader />
 
-        {/* Main Content */}
         <div className="matches-content">
           <div className="match-center">
             <div className="match-center-header">

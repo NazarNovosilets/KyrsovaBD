@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import UserHeader from '../../components/UserHeader';
 import './TeamBuilder.css';
 
 export default function TeamBuilder() {
@@ -18,8 +19,6 @@ export default function TeamBuilder() {
   console.log('🔍 TeamBuilder RENDER: showModal=', showModal, ', selectedPos=', selectedPos);
 
   const userId = localStorage.getItem('userId');
-  const userName = localStorage.getItem('fullName');
-
   const formations = ['3-4-3', '3-5-2', '4-2-4', '4-3-3', '4-4-2', '5-3-2', '5-4-1'];
 
   const formationMap = {
@@ -227,26 +226,7 @@ export default function TeamBuilder() {
 
   return (
        <div className="team-builder">
-         <header className="team-builder-header">
-           <div className="header-left">
-             <div className="logo">⚽ UPL Fantasy</div>
-             <span className="league-name">Ukrainian Premier League</span>
-           </div>
-           <nav className="nav-menu">
-             <Link to="/dashboard" className="nav-item">Dashboard</Link>
-             <Link to="/team-builder" className="nav-item active">My Team</Link>
-             <a href="#leagues" className="nav-item">Leagues</a>
-             <a href="#matches" className="nav-item">Matches</a>
-             <a href="#statistics" className="nav-item">Statistics</a>
-           </nav>
-           <div className="header-right">
-             <button className="user-btn">👤 User</button>
-             <div className="manager-info">
-               <span className="rank-label">Manager</span>
-               <span className="rank">{userName}</span>
-             </div>
-           </div>
-         </header>
+         <UserHeader />
 
         <div className="team-builder-content">
           <div className="team-info-bar">

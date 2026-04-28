@@ -1,0 +1,117 @@
+.user-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem 2rem;
+  background: rgba(8, 17, 31, 0.82);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.user-header__brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.user-header__logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.user-header__league {
+  font-size: 0.82rem;
+  color: #94a3b8;
+}
+
+.user-header__nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.user-header__link {
+  color: #cbd5e1;
+  text-decoration: none;
+  padding: 0.35rem 0;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.user-header__link:hover,
+.user-header__link.is-active {
+  color: #ffffff;
+  border-bottom-color: #38bdf8;
+}
+
+.user-header__meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-header__logout {
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  background: rgba(15, 23, 42, 0.8);
+  color: #f8fafc;
+  padding: 0.65rem 1rem;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.user-header__logout:hover {
+  background: rgba(30, 41, 59, 0.95);
+  transform: translateY(-1px);
+}
+
+.user-header__manager {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+}
+
+.user-header__label {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.user-header__value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+@media (max-width: 900px) {
+  .user-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .user-header__nav {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .user-header__meta {
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 768px) {
+  .user-header__meta {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+  }
+
+  .user-header__manager {
+    align-items: flex-start;
+  }
+}
