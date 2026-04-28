@@ -53,6 +53,9 @@ const Login = () => {
                      if (role === 'admin') {
                          console.log('🚀 Перенаправляємо на /admin');
                          navigate('/admin', { replace: true });
+                     } else if (role === 'analyst' || role === 'analytics') {
+                         console.log('🚀 Перенаправляємо на /analytics');
+                         navigate('/analytics', { replace: true });
                      } else {
                          console.log('🚀 Перенаправляємо на /dashboard');
                          navigate('/dashboard', { replace: true });

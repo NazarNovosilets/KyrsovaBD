@@ -5,10 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6acc1ec1-dc11-42ef-ae14-ff2abfb9c3c1" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/test-lineups-generation.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/verify-lineups.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/pages/Dashboard/Dashboard.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/Dashboard/Dashboard.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/pages/Dashboard/Dashboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/Dashboard/Dashboard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/leaderboardController.js" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/leaderboardController.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/UserHeader.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/UserHeader.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/Matches/Matches.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/Matches/Matches.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/Matches/Matches.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/Matches/Matches.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/login/Login.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/login/Login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controllers/matchController.js" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/matchController.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/authRoutes.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/authRoutes.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

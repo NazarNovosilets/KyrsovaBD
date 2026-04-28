@@ -4,6 +4,7 @@ const authController = require('../controllers/authController');
 const leaderboardController = require('../controllers/leaderboardController');
 const teamController = require('../controllers/teamController');
 const matchController = require('../controllers/matchController');
+const analyticsController = require('../controllers/analyticsController');
 
 // 🔐 Auth routes
 router.post('/register', authController.register);
@@ -13,6 +14,9 @@ router.post('/login', authController.login);
 router.get('/leaderboard', leaderboardController.getLeaderboard);
 router.get('/stats/:userId', leaderboardController.getUserStats);
 router.get('/top-managers', leaderboardController.getTopManagers);
+router.get('/analytics/matches', analyticsController.getAnalystMatches);
+router.get('/analytics/matches/:matchId/lineups', analyticsController.getMatchLineups);
+router.post('/analytics/matches/:matchId/ratings', analyticsController.savePlayerRatings);
 
 // 👥 Team routes
 router.get('/players', teamController.getAllPlayers);

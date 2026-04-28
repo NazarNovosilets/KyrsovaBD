@@ -6,23 +6,8 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import TeamBuilder from './pages/TeamBuilder/TeamBuilder';
 import Matches from './pages/Matches/Matches';
 import AdminPanel from './pages/AdminPanel/AdminPanel';
-
-// ProtectedRoute компонент - перевіряє autentyfication
-const ProtectedRoute = ({ children }) => {
-  const userId = localStorage.getItem('userId');
-
-  console.log('🔐 ProtectedRoute check - userId:', userId);
-
-  if (!userId) {
-    // Якщо немає userId, редиректимо на login
-    console.log('❌ No userId found, redirecting to login');
-    return <Navigate to="/login" replace />;
-  }
-
-  // Якщо є userId, показуємо сторінку
-  console.log('✅ userId found, showing dashboard');
-  return children;
-};
+import AnalyticsMatches from './pages/Analytics/AnalyticsMatches';
+import AnalyticsMatchEvaluation from './pages/Analytics/AnalyticsMatchEvaluation';
 
 // AdminRoute компонент - перевіряє autentyfication і роль адміністратора
 const AdminRoute = ({ children }) => {
@@ -45,6 +30,40 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
+const AnalystRoute = ({ children }) => {
+  const userId = localStorage.getItem('userId');
+  const role = localStorage.getItem('role');
+
+  if (!userId) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (role !== 'analyst' && role !== 'analytics') {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+};
+
+const UserRoute = ({ children }) => {
+  const userId = localStorage.getItem('userId');
+  const role = localStorage.getItem('role');
+
+  if (!userId) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (role === 'admin') {
+    return <Navigate to="/admin" replace />;
+  }
+
+  if (role === 'analyst' || role === 'analytics') {
+    return <Navigate to="/analytics" replace />;
+  }
+
+  return children;
+};
+
 function App() {
   return (
       <Router>
@@ -56,9 +75,9 @@ function App() {
            <Route
              path="/dashboard"
              element={
-               <ProtectedRoute>
+               <UserRoute>
                  <Dashboard />
-               </ProtectedRoute>
+               </UserRoute>
              }
            />
 
@@ -76,9 +95,9 @@ function App() {
             <Route
               path="/team-builder"
               element={
-                <ProtectedRoute>
+                <UserRoute>
                   <TeamBuilder />
-                </ProtectedRoute>
+                </UserRoute>
               }
             />
 
@@ -86,9 +105,27 @@ function App() {
             <Route
               path="/matches"
               element={
-                <ProtectedRoute>
+                <UserRoute>
                   <Matches />
-                </ProtectedRoute>
+                </UserRoute>
+              }
+            />
+
+            <Route
+              path="/analytics"
+              element={
+                <AnalystRoute>
+                  <AnalyticsMatches />
+                </AnalystRoute>
+              }
+            />
+
+            <Route
+              path="/analytics/matches/:matchId/evaluation"
+              element={
+                <AnalystRoute>
+                  <AnalyticsMatchEvaluation />
+                </AnalystRoute>
               }
             />
 

@@ -4,6 +4,8 @@ import './UserHeader.css';
 
 function UserHeader() {
   const navigate = useNavigate();
+  const role = localStorage.getItem('role');
+  const isAnalyst = role === 'analyst' || role === 'analytics';
   const [manager, setManager] = useState({
     name: localStorage.getItem('fullName') || localStorage.getItem('email') || 'User',
     points: 0
@@ -60,22 +62,32 @@ function UserHeader() {
       </div>
 
       <nav className="user-header__nav">
-        <NavLink to="/dashboard" className={({ isActive }) => `user-header__link${isActive ? ' is-active' : ''}`}>
-          Dashboard
-        </NavLink>
-        <NavLink to="/team-builder" className={({ isActive }) => `user-header__link${isActive ? ' is-active' : ''}`}>
-          My Team
-        </NavLink>
-        <NavLink to="/matches" className={({ isActive }) => `user-header__link${isActive ? ' is-active' : ''}`}>
-          Matches
-        </NavLink>
+        {isAnalyst ? (
+          <NavLink to="/analytics" className={({ isActive }) => `user-header__link${isActive ? ' is-active' : ''}`}>
+            Live Matches
+          </NavLink>
+        ) : (
+          <>
+            <NavLink to="/dashboard" className={({ isActive }) => `user-header__link${isActive ? ' is-active' : ''}`}>
+              Dashboard
+            </NavLink>
+            <NavLink to="/team-builder" className={({ isActive }) => `user-header__link${isActive ? ' is-active' : ''}`}>
+              My Team
+            </NavLink>
+            <NavLink to="/matches" className={({ isActive }) => `user-header__link${isActive ? ' is-active' : ''}`}>
+              Matches
+            </NavLink>
+          </>
+        )}
       </nav>
 
       <div className="user-header__meta">
         <button className="user-header__logout" onClick={handleLogout}>Logout</button>
         <div className="user-header__manager">
-          <span className="user-header__label">Manager</span>
-          <span className="user-header__value">{manager.name} • {manager.points.toLocaleString()} pts</span>
+          <span className="user-header__label">{isAnalyst ? 'Analyst' : 'Manager'}</span>
+          <span className="user-header__value">
+            {isAnalyst ? manager.name : `${manager.name} • ${manager.points.toLocaleString()} pts`}
+          </span>
         </div>
       </div>
     </header>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import UserHeader from '../../components/UserHeader';
+import { getClientMatchLifecycle } from '../../utils/matchLifecycle';
 import './Matches.css';
 
 function Matches() {
@@ -8,6 +9,7 @@ function Matches() {
   const [standings, setStandings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [nowMs, setNowMs] = useState(Date.now());
 
   // Мапінг кольорів команд
   const teamColors = {
@@ -30,6 +32,21 @@ function Matches() {
   // Завантаження матчів або таблиці при зміні таба
   useEffect(() => {
     fetchMatches(activeTab);
+  }, [activeTab]);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setNowMs(Date.now());
+    }, 1000);
+
+    const refresh = window.setInterval(() => {
+      fetchMatches(activeTab);
+    }, 30000);
+
+    return () => {
+      window.clearInterval(timer);
+      window.clearInterval(refresh);
+    };
   }, [activeTab]);
 
   const fetchMatches = async (tab) => {
@@ -173,67 +190,71 @@ function Matches() {
                 /* ⚽ СПИСОК МАТЧІВ (Fixtures / Results) */
                 <div className="matches-list">
                   <h2 className="section-title">
-                    {activeTab === 'fixtures' ? 'Upcoming Matches' : 'Latest Results'}
+                    {activeTab === 'fixtures' ? 'Upcoming & Live Matches' : 'Latest Results'}
                   </h2>
                   <p className="section-subtitle">
-                    {activeTab === 'fixtures' ? 'Next fixtures in the Ukrainian Premier League' : 'Recent match scores and statistics'}
+                    {activeTab === 'fixtures' ? 'Live timers and scheduled fixtures in the Ukrainian Premier League' : 'Recent match scores and statistics'}
                   </p>
 
                   {matches.map((match) => {
                     const homeColors = getTeamColors(match.homeTeam);
                     const awayColors = getTeamColors(match.awayTeam);
+                    const lifecycle = getClientMatchLifecycle(match.kickoffIso, match.score, nowMs);
 
                     // Парсимо рахунок для красивого відображення у вкладці Results
                     const [homeGoals, awayGoals] = (match.score || '0:0').split(':');
 
                     return (
-                        <div key={match.id} className="match-card">
+                        <div key={match.id} className={`match-card ${lifecycle.phase}`}>
                           <div className="match-header">
-                            <span className="match-date">📅 {match.date}</span>
-                            <span className="match-time">⏰ {match.time}</span>
+                            <div className="match-header-main">
+                              <span className="match-date">📅 {match.date}</span>
+                              <span className="match-time">⏰ {match.time}</span>
+                            </div>
+                            <div className="match-header-side">
+                              <span className={`match-phase-badge phase-${lifecycle.phase}`}>{lifecycle.statusLabel}</span>
+                              {lifecycle.showTimer && <span className="match-live-timer">{lifecycle.timerLabel}</span>}
+                            </div>
                           </div>
 
                           <div className="match-body">
-                            {/* Home Team */}
                             <div className="team home-team">
-                              <div className="team-colors">
-                                {renderTeamCircle(homeColors.primary)}
-                                {renderTeamCircle(homeColors.secondary)}
-                              </div>
                               <div className="team-info">
                                 <div className="team-name">{match.homeTeam}</div>
                                 <div className="team-code">{match.homeCode}</div>
                               </div>
+                              <div className="team-colors">
+                                {renderTeamCircle(homeColors.primary)}
+                                {renderTeamCircle(homeColors.secondary)}
+                              </div>
                             </div>
 
-                            {/* VS або розпарсений Рахунок */}
                             <div className="vs-container">
-                              {activeTab === 'results' ? (
-                                  <div className="score-display" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ background: '#f0f0f0', color: '#1a1a1a', padding: '6px 12px', borderRadius: '6px', fontWeight: 'bold', fontSize: '1.2rem' }}>
-                              {homeGoals?.trim() || '0'}
-                            </span>
-                                    <span style={{ fontWeight: 'bold', color: '#666' }}>:</span>
-                                    <span style={{ background: '#f0f0f0', color: '#1a1a1a', padding: '6px 12px', borderRadius: '6px', fontWeight: 'bold', fontSize: '1.2rem' }}>
-                              {awayGoals?.trim() || '0'}
-                            </span>
-                                  </div>
+                              {activeTab === 'results' || lifecycle.showScore ? (
+                                <div className="score-display">
+                                  <span className="score-box">{homeGoals?.trim() || '0'}</span>
+                                  <span className="score-divider">-</span>
+                                  <span className="score-box">{awayGoals?.trim() || '0'}</span>
+                                </div>
                               ) : (
-                                  <span className="vs-text">vs</span>
+                                <span className="vs-text">VS</span>
                               )}
                             </div>
 
-                            {/* Away Team */}
                             <div className="team away-team">
-                              <div className="team-info">
-                                <div className="team-name">{match.awayTeam}</div>
-                                <div className="team-code">{match.awayCode}</div>
-                              </div>
                               <div className="team-colors">
                                 {renderTeamCircle(awayColors.primary)}
                                 {renderTeamCircle(awayColors.secondary)}
                               </div>
+                              <div className="team-info">
+                                <div className="team-name">{match.awayTeam}</div>
+                                <div className="team-code">{match.awayCode}</div>
+                              </div>
                             </div>
+                          </div>
+                          <div className="match-footer">
+                            <span className="match-gameweek">{match.gameweekLabel || `GW ${match.gameweek}`}</span>
+                            {lifecycle.showTimer && <span className="match-phase-copy">{lifecycle.statusLabel} in progress</span>}
                           </div>
                         </div>
                     );
